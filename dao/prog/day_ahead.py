@@ -1013,10 +1013,13 @@ class DaCalc(DaBase):
             # p_hp[s][u]: het gevraagde vermogen in W in dat uur
             p_hp = [[model.add_var(var_type=CONTINUOUS, lb=0, ub=stages[s]["max_power"])
                      for _ in range(U)] for s in range(S)]
-
+            logging.info("p_hp:")
+            logging.info(p_hp)
             # schijven aan/uit, iedere schijf kan maar een keer in een uur
             hp_on = [[model.add_var(var_type=BINARY) for _ in range(U)] for _ in range(S)]
-
+            logging.info("hp_on:")
+            logging.info(hp_on)
+          
             # verbruik per uur
             for u in range(U):
                 # verbruik in kWh is totaal vermogen in W/1000
