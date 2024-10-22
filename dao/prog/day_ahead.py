@@ -1027,6 +1027,9 @@ class DaCalc(DaBase):
                 # kosten
                 # model += k_hp[u] == c_hp[u] * pl[u]  # kosten = verbruik x tarief
 
+            logging.info("model")
+            logging.info(model)
+          
             # geproduceerde warmte kWh per uur
             h_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10000) for _ in range(U)]
 
