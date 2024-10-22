@@ -1003,9 +1003,13 @@ class DaCalc(DaBase):
             heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)
             heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)  # heet needed
             stages = self.heating_options["stages"]
+            logging.info("Stages")
+            logging.info(stages)
             S = len(stages)
             c_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10)
                     for _ in range(U)]  # elektriciteitsverbruik in kWh/h
+            logging.info("c_hp:")
+            logging.info(c_hp)
             # p_hp[s][u]: het gevraagde vermogen in W in dat uur
             p_hp = [[model.add_var(var_type=CONTINUOUS, lb=0, ub=stages[s]["max_power"])
                      for _ in range(U)] for s in range(S)]
