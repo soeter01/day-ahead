@@ -999,7 +999,7 @@ class DaCalc(DaBase):
             logging.info(f"Warmtepomp")
             logging.info(f"Graaddagen: {degree_days:.1f}")  # 3.6  heat factor kWh th / K.day
             degree_days_factor = self.heating_options["degree days factor"]
-            logging.info(f"Test degree days factor: {degree_days_factor:.1f}")  #test
+            logging.info(f"Test2 degree days factor: {degree_days_factor:.1f}")  #test
             heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)
             heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)  # heet needed
             stages = self.heating_options["stages"]
