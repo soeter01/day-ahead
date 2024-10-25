@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='day_ahead_opt',
-    version='2024.10.2',
+    version='2024.10.3',
     packages=['dao', 'dao.prog', 'dao.webserver', 'dao.webserver.app'],
     url='https://github.com/soeter01/day-ahead',
     license='Apache License, Version 2.0',
