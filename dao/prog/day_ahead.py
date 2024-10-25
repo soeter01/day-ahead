@@ -1011,6 +1011,7 @@ class DaCalc(DaBase):
             degree_days_factor = self.heating_options["degree days factor"]
             logging.info(f"Test degree days factor: {degree_days_factor:.1f}")  
             heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)                                # Get heat already produced from HA
+            outside_temp = 12                                                                                                  # To be received from meteo data - to be done
 
             # Calculated how long the heat pump should run at which power and therefor how much electrical energy is needed
 #degree_days = (18-outside_temp)*GD_factor
