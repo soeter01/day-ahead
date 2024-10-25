@@ -1479,7 +1479,7 @@ class DaCalc(DaBase):
    #                          f"{p_hp[5][u].x:6.0f} {p_hp[6][u].x:6.0f} {p_hp[7][u].x:6.0f} "
    #                          f"{h_hp[u].x:6.2f} {c_hp[u].x:6.2f}")
             for u in range(U):
-              logging.info(f"{uur[u]:2.0f} {c_hp[i].x:6.2f}")
+              logging.info(f"{uur[u]:2.0f} {c_hp[u].x:6.2f}")
 
         # overzicht per ac-accu:
         pd.options.display.float_format = '{:6.2f}'.format
