@@ -1472,12 +1472,14 @@ class DaCalc(DaBase):
             logging.info("\nInzet warmtepomp")
             # df_hp = pd.DataFrame(columns=["u", "tar", "p0", "p1", "p2", p3     p4     p5     p6     p7
             # heat   cons"])
-            logging.info(f"u     tar     p0     p1     p2     p3     p4     p5     p6     p7   heat   cons")
+   #         logging.info(f"u     tar     p0     p1     p2     p3     p4     p5     p6     p7   heat   cons")
+   #         for u in range(U):
+   #             logging.info(f"{uur[u]:2.0f} {pl[u]:6.4f} {p_hp[0][u].x:6.0f} {p_hp[1][u].x:6.0f} "
+   #                          f"{p_hp[2][u].x:6.0f} {p_hp[3][u].x:6.0f} {p_hp[4][u].x:6.0f} "
+   #                          f"{p_hp[5][u].x:6.0f} {p_hp[6][u].x:6.0f} {p_hp[7][u].x:6.0f} "
+   #                          f"{h_hp[u].x:6.2f} {c_hp[u].x:6.2f}")
             for u in range(U):
-                logging.info(f"{uur[u]:2.0f} {pl[u]:6.4f} {p_hp[0][u].x:6.0f} {p_hp[1][u].x:6.0f} "
-                             f"{p_hp[2][u].x:6.0f} {p_hp[3][u].x:6.0f} {p_hp[4][u].x:6.0f} "
-                             f"{p_hp[5][u].x:6.0f} {p_hp[6][u].x:6.0f} {p_hp[7][u].x:6.0f} "
-                             f"{h_hp[u].x:6.2f} {c_hp[u].x:6.2f}")
+              logging.info(f"{uur[u]:2.0f} {c_hp[i].x:6.2f}")
 
         # overzicht per ac-accu:
         pd.options.display.float_format = '{:6.2f}'.format
