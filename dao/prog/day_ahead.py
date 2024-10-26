@@ -991,11 +991,11 @@ class DaCalc(DaBase):
             p_hp = None
             h_hp = None
         else:
-            degree_days = self.meteo.calc_graaddagen(true)
+            degree_days = self.meteo.calc_graaddagen(dt.date.today(),True)
             if U > 24:
                 degree_days += self.meteo.calc_graaddagen(
                     date=dt.datetime.combine(dt.date.today() + dt.timedelta(days=1),
-                                             dt.datetime.min.time()), true)
+                                             dt.datetime.min.time()), True)
             # Determine correction factor for "gewogen graaddagen"
  #           month=start_dt.month
  #           if month in [11,12,1,2]:
@@ -1011,7 +1011,9 @@ class DaCalc(DaBase):
             degree_days_factor = self.heating_options["degree days factor"]
             logging.info(f"Degree days factor: {degree_days_factor:.1f}")  
             heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)                                # Get heat already produced from HA
-            outside_temp = 12                                                                                                  # To be received from meteo data - to be done
+          
+            outside_temp = 10                                                                                                  # To be received from meteo data - to be done
+            degree_days= 16-outside_temp
 
             # Calculated how long the heat pump should run at which power and therefor how much electrical energy is needed
 #degree_days = (18-outside_temp)*GD_factor
