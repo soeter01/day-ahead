@@ -1026,7 +1026,7 @@ class DaCalc(DaBase):
             hp_power = min(max(-0.002*outside_temp**2 -0.0885*outside_temp+1.9524,0.4),2.5)                                     # Power of the hp in kW as a function of outside temp (coefficients should be in config)
             hp_hours = math.ceil(e_needed/hp_power)                                                                             # Number of hours the heat pump still has to run
             e_needed = hp_hours*hp_power                                                                                        # Elektrical energy to be optimized in kWh
-            logging.info("Heat needed:", heat_needed, "kWh")
+            logging.info(f"Heat needed:{heat_needed:<.1f} kWh")
             logging.info(f"COP:{cop:<4.2f}")
             logging.info(f"Elektricity needed:{e_needed:<4.1f} kWh, P:{hp_power:<3.1f} kW, Hours:{hp_hours}")
             logging.info(f"Heat produced: {heat_produced:<.1f} kWh")
