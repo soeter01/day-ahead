@@ -991,11 +991,11 @@ class DaCalc(DaBase):
             p_hp = None
             h_hp = None
         else:
-            degree_days = self.meteo.calc_graaddagen()
+            [degree_days,outside_temp] = self.meteo.calc_graaddagen()
             if U > 24:
-                degree_days += self.meteo.calc_graaddagen(date=dt.datetime.combine(dt.date.today() + dt.timedelta(days=1),dt.datetime.min.time()))
- #               degree_days += temp_degree_days
- #               outside_temp = (outside_temp+temp_out)/2
+                [temp_degree_days,temp_out] = self.meteo.calc_graaddagen(date=dt.datetime.combine(dt.date.today() + dt.timedelta(days=1),dt.datetime.min.time()))
+                degree_days += temp_degree_days
+                outside_temp = (outside_temp+temp_out)/2
               
             # Determine correction factor for "gewogen graaddagen"
  #           month=start_dt.month
@@ -1008,6 +1008,7 @@ class DaCalc(DaBase):
  #           degree_days = degree_days*GD_factor
  #           logging.info(f"GDf: {GD_factor:<.1f}")
             logging.info(f"Warmtepomp:")
+            logging.info(f"Temp: {outside_temp:.1f}")
             logging.info(f"Gewogen graaddagen: {degree_days:.1f}")  # 3.6  heat factor kWh th / K.day
             degree_days_factor = self.heating_options["degree days factor"]
             logging.info(f"Degree days factor: {degree_days_factor:.1f}")  
