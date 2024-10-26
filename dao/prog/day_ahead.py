@@ -991,11 +991,11 @@ class DaCalc(DaBase):
             p_hp = None
             h_hp = None
         else:
-            degree_days = self.meteo.calc_graaddagen(dt.date.today(),True)
+            degree_days = self.meteo.calc_graaddagen(dt.date.today())
             if U > 24:
                 degree_days += self.meteo.calc_graaddagen(
                     date=dt.datetime.combine(dt.date.today() + dt.timedelta(days=1),
-                                             dt.datetime.min.time()), True)
+                                             dt.datetime.min.time()))
             # Determine correction factor for "gewogen graaddagen"
  #           month=start_dt.month
  #           if month in [11,12,1,2]:
