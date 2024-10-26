@@ -352,7 +352,7 @@ class Meteo:
         self.db_da.savedata(df_db)
         '''
 
-    def calc_graaddagen(self, date: datetime.datetime = None, weighted: bool = False) -> float:
+    def calc_graaddagen(self, date: datetime.datetime = None, weighted: bool = False):
         """
         Berekent gewogen met temperatuur grens van 16 oC
         :param date: de datum waarvoor de berekening wordt gevraagd
@@ -420,7 +420,7 @@ class Meteo:
             result = weight_factor * (16 - avg_temp)
 
         logging.info(f"GD:{result:<0.2f},T:{avg_temp:<0.2f}")
-        return result
+        return [result,avg_temp]
 
     def calc_solar_rad(self, solar_opt: dict, utc_time: int, global_rad: float) -> float:
         """
