@@ -360,8 +360,8 @@ class Meteo:
         :param weighted : boolean, berekenen met (true) of zonder (false) weegfactor
         :return: berekende gewogen graaddagen
         """
-        logging.info("Calc")
-        logging.info(date)
+#        logging.info("Calc")
+ #       logging.info(date)
         if date is None:
             date = datetime.datetime.combine(datetime.datetime.today(), datetime.datetime.min.time())
         date_utc = int(date.timestamp())
