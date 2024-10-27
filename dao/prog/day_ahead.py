@@ -1477,17 +1477,17 @@ class DaCalc(DaBase):
                             (spec_heat_boiler / (3600 * cop_boiler)))
             logging.info(f"Waarde boiler om 23 uur: {boiler_at_23:<0.2f} kWh")
         if self.heater_present:
-            logging.info("\nInzet warmtepomp")
-            # df_hp = pd.DataFrame(columns=["u", "tar", "p0", "p1", "p2", p3     p4     p5     p6     p7
+            logging.info("\nInzet warmtepomp:")
+            #df_hp = pd.DataFrame(columns=["u", "tar", "p0", "p1", "p2", p3     p4     p5     p6     p7
             # heat   cons"])
-   #         logging.info(f"u     tar     p0     p1     p2     p3     p4     p5     p6     p7   heat   cons")
+            logging.info(f"u     prijs   cons")
    #         for u in range(U):
    #             logging.info(f"{uur[u]:2.0f} {pl[u]:6.4f} {p_hp[0][u].x:6.0f} {p_hp[1][u].x:6.0f} "
    #                          f"{p_hp[2][u].x:6.0f} {p_hp[3][u].x:6.0f} {p_hp[4][u].x:6.0f} "
    #                          f"{p_hp[5][u].x:6.0f} {p_hp[6][u].x:6.0f} {p_hp[7][u].x:6.0f} "
    #                          f"{h_hp[u].x:6.2f} {c_hp[u].x:6.2f}")
             for u in range(U):
-              logging.info(f"{uur[u]:2.0f} {c_hp[u].x:6.2f}")
+              logging.info(f"{uur[u]:2.0f} {pl[u]:6.4f} {c_hp[u].x:6.2f}")
 
         # overzicht per ac-accu:
         pd.options.display.float_format = '{:6.2f}'.format
@@ -1869,18 +1869,33 @@ class DaCalc(DaBase):
             # heating
             ##################################################
             if self.heater_present:
-                entity_curve_adjustment = self.heating_options["entity adjust heating curve"]
-                old_adjustment = float(self.get_state(
-                    entity_curve_adjustment).state)
-                # adjustment factor (K/%) bijv 0.4 K/10% = 0.04
-                adjustment_factor = self.heating_options["adjustment factor"]
-                adjustment = calc_adjustment_heatcurve(
-                    pl[0], p_avg, adjustment_factor, old_adjustment)
-                if self.debug:
-                    logging.info(f"Aanpassing stooklijn zou zijn: {adjustment:<0.2f}")
+                entity_hp_switch = self.config.get(["entity hp switch"], self.heating_options["heating"], None)
+                switch_state = self.get_state(entity_hp_switch).state
+                if hp_on[0].x == 1:
+                  if switch_state == "off":
+                    if self.debug:
+                      logging.info(f"Heat pump would have been switch on")
+                    else:
+                      logging.info(f"Heat pump switched on")
+                      self.turn_on(entity_hp_switch)
                 else:
-                    logging.info(f"Aanpassing stooklijn: {adjustment:<0.2f}")
-                    self.set_value(entity_curve_adjustment, adjustment)
+                  if switch_state == "on":
+                    if self.debug:
+                      logging.info(f"Heat pump would have been switched off")
+                    else:
+                      logging.info(f"Heat pump switched off")
+                      self.turn_off(entity_hp_switch)
+        
+                # adjustment factor (K/%) bijv 0.4 K/10% = 0.04
+#                adjustment_factor = self.heating_options["adjustment factor"]
+#                adjustment = calc_adjustment_heatcurve(
+#                    pl[0], p_avg, adjustment_factor, old_adjustment)
+              
+#                if self.debug:
+#                    logging.info(f"Aanpassing stooklijn zou zijn: {adjustment:<0.2f}")
+#                else:
+#                    logging.info(f"Aanpassing stooklijn: {adjustment:<0.2f}")
+#                    self.set_value(entity_curve_adjustment, adjustment)
 
             ########################################################################
             # apparaten /machines
