@@ -1880,7 +1880,7 @@ class DaCalc(DaBase):
                 if hp_on[0].x == 1:
                   if switch_state == "off":
                     if self.debug:
-                      logging.info(f"Heat pump would have been switch on")
+                      logging.info(f"Heat pump would have been switched on")
                     else:
                       logging.info(f"Heat pump switched on")
                       self.turn_on(entity_hp_switch)
