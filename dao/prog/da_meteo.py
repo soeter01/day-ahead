@@ -411,7 +411,7 @@ class Meteo:
         mon = date.month
         if mon <= 2 or mon >= 11:
             weight_factor = 1.1
-        elif mon >= 4 or mon <= 9:
+        elif mon >= 4 and mon <= 9:
             weight_factor = 0.8
                 
         if avg_temp >= 16:
@@ -419,7 +419,7 @@ class Meteo:
         else:
             result = weight_factor * (16 - avg_temp)
 
-        logging.info(f"GD:{result:<0.2f},T:{avg_temp:<0.2f}")
+        logging.debug(f"Graaddagen:{result:<0.2f},Gemiddelde buiten temperatuur:{avg_temp:<0.2f}")
         return [result,avg_temp]
 
     def calc_solar_rad(self, solar_opt: dict, utc_time: int, global_rad: float) -> float:
