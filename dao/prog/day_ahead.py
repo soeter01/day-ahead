@@ -1008,14 +1008,14 @@ class DaCalc(DaBase):
  #           degree_days = degree_days*GD_factor
  #           logging.info(f"GDf: {GD_factor:<.1f}")
             logging.info(f"Warmtepomp:")
-            logging.info(f"Temp: {outside_temp:.1f}")
-            logging.info(f"Gewogen graaddagen: {degree_days:.1f}")  # 3.6  heat factor kWh th / K.day
+            logging.debug(f"Voorspelde buitentemperatuur: {outside_temp:.1f}")
+            logging.debug(f"Gewogen graaddagen: {degree_days:.1f}")  # 3.6  heat factor kWh th / K.day
             degree_days_factor = self.heating_options["degree days factor"]
-            logging.info(f"Degree days factor: {degree_days_factor:.1f}")  
+            logging.debug(f"Degree days factor: {degree_days_factor:.1f}")  
             heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)                                # Get heat already produced from HA
           
-            outside_temp = 10                                                                                                  # To be received from meteo data - to be done
-            degree_days= 16-outside_temp
+#            outside_temp = 10                                                                                                  # Test
+#            degree_days= 16-outside_temp
 
             # Calculated how long the heat pump should run at which power and therefor how much electrical energy is needed
 #degree_days = (18-outside_temp)*GD_factor
@@ -1029,8 +1029,8 @@ class DaCalc(DaBase):
             e_needed = hp_hours*hp_power                                                                                        # Elektrical energy to be optimized in kWh
             logging.info(f"Heat needed:{heat_needed:<.1f} kWh")
             logging.info(f"COP:{cop:<4.2f}")
-            logging.info(f"Elektricity needed:{e_needed:<4.1f} kWh, P:{hp_power:<3.1f} kW, Hours:{hp_hours}")
-            logging.info(f"Heat produced: {heat_produced:<.1f} kWh")
+            logging.info(f"Elektricity needed:{e_needed:<4.1f} kWh, Power:{hp_power:<3.1f} kW, Hours:{hp_hours}")
+            logging.info(f"Heat already produced: {heat_produced:<.1f} kWh")
 
           # heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)  # heet needed
 
@@ -1314,7 +1314,7 @@ class DaCalc(DaBase):
         # alle verbruiken in de totaal balans in kWh
         #####################################################
 
-        logging.info("balans")
+        logging.debug("balans")
         for u in range(U):
             print(u)
             model += (c_l[u] == c_t_total[u] + b_l[u] * hour_fraction[u] +
