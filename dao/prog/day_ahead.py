@@ -1869,7 +1869,8 @@ class DaCalc(DaBase):
             # heating
             ##################################################
             if self.heater_present:
-                entity_hp_switch = self.config.get(["entity hp switch"], self.heating_options["heating"], None)
+                entity_hp_switch = self.heating_options["entity hp switch"]
+                logging.debug(f"HP switch: {entity_hp_switch}")
                 switch_state = self.get_state(entity_hp_switch).state
                 if hp_on[0].x == 1:
                   if switch_state == "off":
