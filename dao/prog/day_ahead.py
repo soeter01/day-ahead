@@ -173,6 +173,9 @@ class DaCalc(DaBase):
             base_cons = self.config.get(["baseload"])
             if U >= 24:
                 base_cons = base_cons + base_cons
+            logging.debug(f"Base load:")
+            logging.debug(len(base_cons))
+            logging.debug(base_cons)
 
         # 0.015 kWh/J/cm² productie van mijn panelen per J/cm²
         pv_yield = []
@@ -189,7 +192,9 @@ class DaCalc(DaBase):
 
         time_first_hour = dt.datetime.fromtimestamp(prog_data["time"].iloc[0])
         first_hour = int(time_first_hour.hour)
+        logging.debug(f"First hour: {first_hour}")
         b_l = base_cons[first_hour:]
+        logging.debug(b_l)
         uur = []  # hulparray met uren
         tijd = []
         ts = []
