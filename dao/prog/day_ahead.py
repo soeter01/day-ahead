@@ -1314,9 +1314,9 @@ class DaCalc(DaBase):
         # alle verbruiken in de totaal balans in kWh
         #####################################################
 
-        logging.debug("balans")
+ #       logging.debug("balans")
         for u in range(U):
-            print(u)
+ #           print(u)
             model += (c_l[u] == c_t_total[u] + b_l[u] * hour_fraction[u] +
                       xsum(ac_to_dc[b][u] - ac_from_dc[b][u] for b in range(B)) * hour_fraction[u] +
                       # xsum(ac_to_dc[b][u] - ac_from_dc[b][u] for b in range(B)) +
