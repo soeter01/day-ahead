@@ -996,112 +996,56 @@ class DaCalc(DaBase):
             p_hp = None
             h_hp = None
         else:
+            entity_hp_enabled = self.heating_options["entity hp enabled"]                                                      # Get entity that determines if hp is enabled (thermostat hp is on)
+            hp_enabled = self.get_state("entity_hp_enabled").state
+            if hp_enabled == 'off':
+              logging.info("Warmtepomp vraag actief")
+            else:
+              logging.info("Geen warmtepomp vraag - warmtepomp wordt niet ingepland")
+              
             [degree_days,outside_temp] = self.meteo.calc_graaddagen()
             if U > 24:
                 [temp_degree_days,temp_out] = self.meteo.calc_graaddagen(date=dt.datetime.combine(dt.date.today() + dt.timedelta(days=1),dt.datetime.min.time()))
                 degree_days += temp_degree_days
                 outside_temp = (outside_temp+temp_out)/2
               
-            # Determine correction factor for "gewogen graaddagen"
- #           month=start_dt.month
- #           if month in [11,12,1,2]:
- #             GD_factor = 1.1
- #          elif month in [3, 10]:
- #            GD_factor = 1
- #           else:
- #             GD_factor = 0.8
- #           degree_days = degree_days*GD_factor
- #           logging.info(f"GDf: {GD_factor:<.1f}")
             logging.info(f"Warmtepomp:")
             logging.debug(f"Voorspelde buitentemperatuur: {outside_temp:.1f}")
-            logging.debug(f"Gewogen graaddagen: {degree_days:.1f}")  # 3.6  heat factor kWh th / K.day
+            logging.debug(f"Gewogen graaddagen: {degree_days:.1f}")  
             degree_days_factor = self.heating_options["degree days factor"]
             logging.debug(f"Degree days factor: {degree_days_factor:.1f}")  
-            heat_produced = float(self.get_state("sensor.daily_heat_production_heating").state)                                # Get heat already produced from HA
-          
-#            outside_temp = 10                                                                                                  # Test
-#            degree_days= 16-outside_temp
-
+            entity_heat_produced = self.heating_options["entity hp heat produced"]
+            heat_produced = float(self.get_state("entity_heat_produced").state)                                                  # Get heat already produced from HA
+  
             # Calculated how long the heat pump should run at which power and therefor how much electrical energy is needed
-#degree_days = (18-outside_temp)*GD_factor
-#degree_days_factor = 3.6            
-#heat_produced = 0                                                                                                              # Heat produced sofar today in kWh
-            heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)                                            # Heat needed in kWh
-            cop_coeff = self.heating_options["cop coeff"]
+            heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)                                             # Heat needed in kWh
+            cop_coeff = self.heating_options["cop coeff"]                                                                        # Get coefficients to calculate COP from outside temperature
             cop_a0 = cop_coeff[0]
             cop_a1 = cop_coeff[1]
             cop_a2 = cop_coeff[2]
             logging.debug(f"a0: {cop_a0}, a1: {cop_a1}, a2: {cop_a2}")
-#            cop = min(max(0.0136*outside_temp**2+0.0859*outside_temp+3.5,3.25),6)                                               # COP at a given outside temp (coefficients should be in config)
-           cop = min(max(cop_a0*outside_temp**2+cop_a1*outside_temp+cop_a2,3.25),6)                                             # COP at a given outside temp (coefficients should be in config)
-            e_needed = heat_needed/cop                                                                                          # Elektrical energy needed in kWh
-            power_coeff = self.heating_options["power coeff"]
+            cop = min(max(cop_a0*outside_temp**2+cop_a1*outside_temp+cop_a2,3.25),6)                                             # COP at a given outside temp 
+            e_needed = heat_needed/cop                                                                                           # Elektrical energy needed in kWh
+            power_coeff = self.heating_options["power coeff"]                                                                    # Get coefficients to calculate HP power in kW from outside temperature
             pow_a0 = power_coeff[0]
             pow_a1 = power_coeff[1]
             pow_a2 = power_coeff[2]
-#            hp_power = min(max(-0.002*outside_temp**2 -0.0885*outside_temp+1.9524,0.4),2.5)                                     # Power of the hp in kW as a function of outside temp (coefficients should be in config)
-            hp_power = min(max(pow_a0*outside_temp**2 + pow_a1*outside_temp + pow_a2,0.4),2.5)                                  # Power of the hp in kW as a function of outside temp (coefficients should be in config)
-            hp_hours = math.ceil(e_needed/hp_power)                                                                             # Number of hours the heat pump still has to run
-            e_needed = hp_hours*hp_power                                                                                        # Elektrical energy to be optimized in kWh
+            hp_power = min(max(pow_a0*outside_temp**2 + pow_a1*outside_temp + pow_a2,0.4),2.5)                                   # Power of the hp in kW as a function of outside temp (coefficients should be in config)
+            hp_hours = math.ceil(e_needed/hp_power)                                                                              # Number of hours the heat pump still has to run
+            e_needed = hp_hours*hp_power                                                                                         # Elektrical energy to be optimized in kWh
             logging.info(f"Heat needed:{heat_needed:<.1f} kWh")
             logging.info(f"COP:{cop:<4.2f}")
-            logging.info(f"Elektricity needed:{e_needed:<4.1f} kWh, Power:{hp_power:<3.1f} kW, Hours:{hp_hours}")
+            logging.info(f"Elektricity needed:{e_needed:<4.1f} kWh, Power:{hp_power:<3.1f} kW, HP will run for:{hp_hours} hours")
             logging.info(f"Heat already produced: {heat_produced:<.1f} kWh")
 
-          # heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)  # heet needed
-
             # Add the vars
-            c_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10) for _ in range(U)]                                          # Electricity consumption per hour
-            hp_on = [model.add_var(var_type=BINARY) for _ in range(U)]                                                          # If on the pump will run in that hour
-  #          cost = model.add_var(var_type=CONTINUOUS, lb=-1000, ub=1000)                                                        # cost variabele
-
+            c_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10) for _ in range(U)]                                           # Electricity consumption per hour
+            hp_on = [model.add_var(var_type=BINARY) for _ in range(U)]                                                           # If on the pump will run in that hour
+  
             # Add the contraints
             for u in range(U):
-              model += c_hp[u] == hp_power * hp_on[u]                                                                           # Energy consumption per hour is equal to power if it runs in that hour
-            model += xsum(hp_on[u] for u in range(U)) == hp_hours                                                               # Ensure pump is running for designated number of hours
-
-#            stages = self.heating_options["stages"]
-#            logging.info("Stages")
-#            logging.info(stages)
-#            S = len(stages)
-#            c_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10)
-#                    for _ in range(U)]  # elektriciteitsverbruik in kWh/h
-#            logging.info("c_hp:")
-#            logging.info(c_hp)
-#            # p_hp[s][u]: het gevraagde vermogen in W in dat uur
-#            p_hp = [[model.add_var(var_type=CONTINUOUS, lb=0, ub=stages[s]["max_power"])
-#                     for _ in range(U)] for s in range(S)]
-#            logging.info("p_hp:")
-#            logging.info(p_hp)
-#            # schijven aan/uit, iedere schijf kan maar een keer in een uur
-#            hp_on = [[model.add_var(var_type=BINARY) for _ in range(U)] for _ in range(S)]
-#            logging.info("hp_on:")
-#            logging.info(hp_on)
-          
- #           # verbruik per uur
- #           for u in range(U):
- #               # verbruik in kWh is totaal vermogen in W/1000
- #               model += c_hp[u] == (xsum(p_hp[s][u] for s in range(S))) / 1000
- #               # kosten
- #               # model += k_hp[u] == c_hp[u] * pl[u]  # kosten = verbruik x tarief
-
-#            logging.info("model")
-#            logging.info(model)
-          
- #           # geproduceerde warmte kWh per uur
- #           h_hp = [model.add_var(var_type=CONTINUOUS, lb=0, ub=10000) for _ in range(U)]
-
- #           # beschikbaar vermogen x aan/uit, want p_hpx[u] X hpx_on[u] kan niet
- #           for u in range(U):
- #               for s in range(S):
- #                   model += p_hp[s][u] <= stages[s]["max_power"] * hp_on[s][u]
- #               # ieder uur maar een aan
- #               model += (xsum(hp_on[s][u] for s in range(S))) + boiler_on[u] == 1
- #               # geproduceerde warmte = vermogen in W * COP_schijf /1000 in kWh
- #               model += h_hp[u] == xsum((p_hp[s][u] * stages[s]["cop"]/1000)
- #                                        for s in range(S)) * hour_fraction[u]
- #           # som van alle geproduceerde warmte == benodigde warmte
- #           model += xsum(h_hp[u] for u in range(U)) == heat_needed
+              model += c_hp[u] == hp_power * hp_on[u]                                                                            # Energy consumption per hour is equal to power if it runs in that hour
+            model += xsum(hp_on[u] for u in range(U)) == hp_hours                                                                # Ensure pump is running for designated number of hours
 
         ########################################################################
         # apparaten /machines
@@ -1496,7 +1440,7 @@ class DaCalc(DaBase):
             logging.info("\nInzet warmtepomp:")
             #df_hp = pd.DataFrame(columns=["u", "tar", "p0", "p1", "p2", p3     p4     p5     p6     p7
             # heat   cons"])
-            logging.info(f"u     prijs   cons")
+            logging.info(f"uur      prijs  consumptie")
    #         for u in range(U):
    #             logging.info(f"{uur[u]:2.0f} {pl[u]:6.4f} {p_hp[0][u].x:6.0f} {p_hp[1][u].x:6.0f} "
    #                          f"{p_hp[2][u].x:6.0f} {p_hp[3][u].x:6.0f} {p_hp[4][u].x:6.0f} "
@@ -1903,17 +1847,6 @@ class DaCalc(DaBase):
                       logging.info(f"Heat pump switched off")
                       self.turn_off(entity_hp_switch)
         
-                # adjustment factor (K/%) bijv 0.4 K/10% = 0.04
-#                adjustment_factor = self.heating_options["adjustment factor"]
-#                adjustment = calc_adjustment_heatcurve(
-#                    pl[0], p_avg, adjustment_factor, old_adjustment)
-              
-#                if self.debug:
-#                    logging.info(f"Aanpassing stooklijn zou zijn: {adjustment:<0.2f}")
-#                else:
-#                    logging.info(f"Aanpassing stooklijn: {adjustment:<0.2f}")
-#                    self.set_value(entity_curve_adjustment, adjustment)
-
             ########################################################################
             # apparaten /machines
             ########################################################################
