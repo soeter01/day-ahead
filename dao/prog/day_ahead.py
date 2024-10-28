@@ -1028,9 +1028,9 @@ class DaCalc(DaBase):
 #heat_produced = 0                                                                                                              # Heat produced sofar today in kWh
             heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)                                            # Heat needed in kWh
             cop_coeff = self.heating_options["cop coeff"]
-            cop_a0 = cop_coeff["a0"]
-            cop_a1 = cop_coeff["a1"]
-            cop_a2 = cop_coeff["a2"]
+            cop_a0 = cop_coeff[0]
+            cop_a1 = cop_coeff[1]
+            cop_a2 = cop_coeff[2]
             logging.debug(f"a0: {cop_a0}, a1: {cop_a1}, a2: {cop_a2}")
             cop = min(max(0.0136*outside_temp**2+0.0859*outside_temp+3.5,3.25),6)                                               # COP at a given outside temp (coefficients should be in config)
             e_needed = heat_needed/cop                                                                                          # Elektrical energy needed in kWh
