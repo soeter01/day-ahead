@@ -997,7 +997,7 @@ class DaCalc(DaBase):
             h_hp = None
         else:
             entity_hp_enabled = self.heating_options["entity hp enabled"]                                                      # Get entity that determines if hp is enabled (thermostat hp is on)
-            hp_enabled = self.get_state("entity_hp_enabled").state
+            hp_enabled = self.get_state(entity_hp_enabled).state
             if hp_enabled == 'off':
               logging.info("Warmtepomp vraag actief")
             else:
@@ -1015,7 +1015,7 @@ class DaCalc(DaBase):
             degree_days_factor = self.heating_options["degree days factor"]
             logging.debug(f"Degree days factor: {degree_days_factor:.1f}")  
             entity_heat_produced = self.heating_options["entity hp heat produced"]
-            heat_produced = float(self.get_state("entity_heat_produced").state)                                                  # Get heat already produced from HA
+            heat_produced = float(self.get_state(entity_heat_produced).state)                                                   # Get heat already produced from HA
   
             # Calculated how long the heat pump should run at which power and therefor how much electrical energy is needed
             heat_needed = max(0.0, degree_days * degree_days_factor - heat_produced)                                             # Heat needed in kWh
