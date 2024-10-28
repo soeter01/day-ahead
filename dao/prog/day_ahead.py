@@ -270,6 +270,8 @@ class DaCalc(DaBase):
                 logging.info(f"Start waarden: \n{start_df.to_string()}")
         except Exception as ex:
             logging.error(ex)
+        while len(b_l) < len(uur):  #addition from Cees ivm DST
+          b_l.append(b_l[-1])
         logging.debug(f"lengte prognose arrays:")
         logging.debug(f"uur: {len(uur)}")
         logging.debug(f"tijd: {len(tijd)}")
