@@ -1832,23 +1832,26 @@ class DaCalc(DaBase):
             # heating
             ##################################################
             if self.heater_present:
-                entity_hp_switch = self.heating_options["entity hp switch"]
-                logging.debug(f"HP switch: {entity_hp_switch}")
-                switch_state = self.get_state(entity_hp_switch).state
-                if hp_on[0].x == 1:
-                  if switch_state == "off":
-                    if self.debug:
-                      logging.info(f"Heat pump would have been switched on")
-                    else:
-                      logging.info(f"Heat pump switched on")
-                      self.turn_on(entity_hp_switch)
+                if hp_enabled == 1:
+                  entity_hp_switch = self.heating_options["entity hp switch"]
+                  logging.debug(f"HP switch: {entity_hp_switch}")
+                  switch_state = self.get_state(entity_hp_switch).state
+                  if hp_on[0].x == 1:
+                    if switch_state == "off":
+                      if self.debug:
+                        logging.info(f"Heat pump would have been switched on")
+                      else:
+                        logging.info(f"Heat pump switched on")
+                        self.turn_on(entity_hp_switch)
+                  else:
+                    if switch_state == "on":
+                      if self.debug:
+                        logging.info(f"Heat pump would have been switched off")
+                      else:
+                        logging.info(f"Heat pump switched off")
+                        self.turn_off(entity_hp_switch)
                 else:
-                  if switch_state == "on":
-                    if self.debug:
-                      logging.info(f"Heat pump would have been switched off")
-                    else:
-                      logging.info(f"Heat pump switched off")
-                      self.turn_off(entity_hp_switch)
+                  logging.info("Geen warmte vraag")
         
             ########################################################################
             # apparaten /machines
