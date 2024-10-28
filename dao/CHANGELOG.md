@@ -1,5 +1,7 @@
 # Changelog 刀 DAO
 # Day Ahead Optimizer
+## [V2024.10.4.21]
+- Heatpump optimization improved. COP and Heatpump power calculated based on outside temperature. Required thermal energy based on 'gewogen graaddagen'. Based on COP and power of the heatpump the number of hourse the heatpump has to run is calculated. The optimization routine determines which hours to run to minimize cost/delivery. Entities introduced to switch the heatpump on/off in HA.
 ## [V2024.10.4]
 - When there are no batteries configured there was a soc-calculation error. This is corrected.
 - The color of all the soc-lines are changed to "olive"
