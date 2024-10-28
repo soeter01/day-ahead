@@ -1032,9 +1032,15 @@ class DaCalc(DaBase):
             cop_a1 = cop_coeff[1]
             cop_a2 = cop_coeff[2]
             logging.debug(f"a0: {cop_a0}, a1: {cop_a1}, a2: {cop_a2}")
-            cop = min(max(0.0136*outside_temp**2+0.0859*outside_temp+3.5,3.25),6)                                               # COP at a given outside temp (coefficients should be in config)
+#            cop = min(max(0.0136*outside_temp**2+0.0859*outside_temp+3.5,3.25),6)                                               # COP at a given outside temp (coefficients should be in config)
+           cop = min(max(cop_a0*outside_temp**2+cop_a1*outside_temp+cop_a2,3.25),6)                                             # COP at a given outside temp (coefficients should be in config)
             e_needed = heat_needed/cop                                                                                          # Elektrical energy needed in kWh
-            hp_power = min(max(-0.002*outside_temp**2 -0.0885*outside_temp+1.9524,0.4),2.5)                                     # Power of the hp in kW as a function of outside temp (coefficients should be in config)
+            power_coeff = self.heating_options["power coeff"]
+            pow_a0 = power_coeff[0]
+            pow_a1 = power_coeff[1]
+            pow_a2 = power_coeff[2]
+#            hp_power = min(max(-0.002*outside_temp**2 -0.0885*outside_temp+1.9524,0.4),2.5)                                     # Power of the hp in kW as a function of outside temp (coefficients should be in config)
+            hp_power = min(max(pow_a0*outside_temp**2 + pow_a1*outside_temp + pow_a2,0.4),2.5)                                  # Power of the hp in kW as a function of outside temp (coefficients should be in config)
             hp_hours = math.ceil(e_needed/hp_power)                                                                             # Number of hours the heat pump still has to run
             e_needed = hp_hours*hp_power                                                                                        # Elektrical energy to be optimized in kWh
             logging.info(f"Heat needed:{heat_needed:<.1f} kWh")
