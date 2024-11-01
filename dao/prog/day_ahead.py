@@ -158,6 +158,9 @@ class DaCalc(DaBase):
         for u in range(U):
             pl_avg.append(p_avg)
 
+        logging.debug(f"pl: {pl}, pt: {pt}, pt_notax: {pt_notax}")
+        logging.debug(f"p_avg: {p_avg}")
+
         # base load
         if self.use_calc_baseload:
             logging.info(f"Zelf berekende baseload")
@@ -1298,6 +1301,9 @@ class DaCalc(DaBase):
             p_bat = p_avg
         else:
             p_bat = sum(pt_notax)/U
+
+        logging.debug(f"avg_eff_dc_ac: {avg_eff_dc_ac[0]}, eff_bat_dc: {eff_bat_to_dc[0]}")
+        logging.debug(f"soc_mid_0: {soc_mid[0][0]}, soc_mid_U: {soc_mid[0][U]}, one_soc: {one_soc[0]}")
 
         # alles in kWh * prijs = kosten in euro
         model += cost == xsum(c_l[u] * pl[u] - c_t_w_tax[u] * pt[u] - c_t_no_tax[u] * pt_notax[u]
