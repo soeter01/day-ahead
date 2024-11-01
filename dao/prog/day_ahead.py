@@ -1302,7 +1302,7 @@ class DaCalc(DaBase):
         else:
             p_bat = sum(pt_notax)/U
 
-        logging.debug(f"avg_eff_dc_ac: {avg_eff_dc_ac[0]}, eff_bat_dc: {eff_bat_to_dc[0]}")
+        logging.debug(f"avg_eff_dc_ac: {avg_eff_dc_to_ac[0]}, eff_bat_dc: {eff_bat_to_dc[0]}")
         logging.debug(f"soc_mid_0: {soc_mid[0][0]}, soc_mid_U: {soc_mid[0][U]}, one_soc: {one_soc[0]}")
 
         # alles in kWh * prijs = kosten in euro
