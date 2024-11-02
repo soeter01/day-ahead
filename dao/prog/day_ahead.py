@@ -1840,10 +1840,10 @@ class DaCalc(DaBase):
             # heating
             ##################################################
             if self.heater_present:
-                if hp_enabled == 1:
-                  entity_hp_switch = self.heating_options["entity hp switch"]
-                  logging.debug(f"HP switch: {entity_hp_switch}")
-                  switch_state = self.get_state(entity_hp_switch).state
+                entity_hp_switch = self.heating_options["entity hp switch"]
+                logging.debug(f"HP switch: {entity_hp_switch}")
+                switch_state = self.get_state(entity_hp_switch).state
+                if hp_enabled == 1:             
                   if hp_on[0].x == 1:
                     if switch_state == "off":
                       if self.debug:
@@ -1859,6 +1859,7 @@ class DaCalc(DaBase):
                         logging.info(f"Heat pump switched off")
                         self.turn_off(entity_hp_switch)
                 else:
+                  self.turn_off(entity_hp_switch)
                   logging.info("Geen warmte vraag")
         
             ########################################################################
