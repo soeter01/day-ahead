@@ -497,9 +497,11 @@ class DaCalc(DaBase):
         # met sos ###################################################################
         ac_to_dc_samples = [[self.battery_options[b]["charge stages"][cs]["power"]/1000
                             for cs in range(CS[b])] for b in range(B)]
+        logging.debug(f"ac_to_dc_samples: {ac_to_dc_samples}")
         dc_from_ac_samples = [[(self.battery_options[b]["charge stages"][cs]["efficiency"] *
                                self.battery_options[b]["charge stages"][cs]["power"] / 1000)
                                for cs in range(CS[b])] for b in range(B)]
+        logging.debug(f"dc_from_ac_samples: {dc_from_ac_samples}")
         ac_to_dc = [[model.add_var(var_type=CONTINUOUS,
                                    lb=0,
                                    ub=min(reduced_power[b][u], max_charge_power[b]))
