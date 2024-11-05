@@ -1304,9 +1304,6 @@ class DaCalc(DaBase):
         else:
             p_bat = sum(pt_notax)/U
 
-        logging.debug(f"avg_eff_dc_ac: {avg_eff_dc_to_ac[0]}, eff_bat_dc: {eff_bat_to_dc[0]}")
-        logging.debug(f"soc_mid_0: {soc_mid[0][0].x}, soc_mid_U: {soc_mid[0][U].x}, one_soc: {one_soc[0]}")
-
         # alles in kWh * prijs = kosten in euro
         model += cost == xsum(c_l[u] * pl[u] - c_t_w_tax[u] * pt[u] - c_t_no_tax[u] * pt_notax[u]
                               for u in range(U)) + \
@@ -1370,7 +1367,9 @@ class DaCalc(DaBase):
         if model.num_solutions == 0:
             logging.error(f"Er is helaas geen oplossing gevonden, kijk naar je instellingen.")
             return
-
+        logging.debug(f"avg_eff_dc_ac: {avg_eff_dc_to_ac[0]}, eff_bat_dc: {eff_bat_to_dc[0]}")
+        logging.debug(f"soc_mid_0: {soc_mid[0][0].x}, soc_mid_U: {soc_mid[0][U].x}, one_soc: {one_soc[0]}")
+                       
         # er is een oplossing
         # afdrukken van de resultaten
         logging.info("Het programma heeft een optimale oplossing gevonden.")
