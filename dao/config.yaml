@@ -1,6 +1,6 @@
 ---
 name: 刀 Day Ahead Optimizer2
-version: "2024.10.4.28"
+version: "2024.10.4.29"
 slug: day_ahead_opt
 description: Test version add-on for day ahead optimizations
 url: https://github.com/soeter01/day-ahead/
