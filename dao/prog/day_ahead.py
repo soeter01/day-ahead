@@ -193,6 +193,8 @@ class DaCalc(DaBase):
                 entity = None
             entity_pv_ac_switch.append(entity)
 
+        logging.debug(f"yield: {pv_yield}")
+        
         time_first_hour = dt.datetime.fromtimestamp(prog_data["time"].iloc[0])
         first_hour = int(time_first_hour.hour)
         logging.debug(f"First hour: {first_hour}")
@@ -232,6 +234,8 @@ class DaCalc(DaBase):
                         hour_fraction[-1])
                 solar_prod[s].append(prod)
                 pv_total += prod
+            logging.debug(f"pv_tot: {pv_total}")
+            logging.debug(f"pv: {solar_prod[0]}")
             pv_org_ac.append(pv_total)
             pv_total = 0
             for b in range(B):
@@ -243,7 +247,7 @@ class DaCalc(DaBase):
                         hour_fraction[-1])
                     pv_total += prod
             pv_org_dc.append(pv_total)
-
+        
             dag_str = dtime.strftime("%Y-%m-%d")
             taxes_l = get_value_from_dict(dag_str, taxes_l_def)
             taxes_t = get_value_from_dict(dag_str, taxes_t_def)
