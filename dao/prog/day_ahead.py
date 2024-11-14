@@ -234,8 +234,6 @@ class DaCalc(DaBase):
                         hour_fraction[-1])
                 solar_prod[s].append(prod)
                 pv_total += prod
-            logging.debug(f"pv_tot: {pv_total}")
-            logging.debug(f"pv: {solar_prod[0]}")
             pv_org_ac.append(pv_total)
             pv_total = 0
             for b in range(B):
@@ -287,6 +285,8 @@ class DaCalc(DaBase):
         logging.debug(f"base: {len(b_l)}")
         logging.debug(f"pv_ac: {len(pv_org_ac)}")
         logging.debug(f"pv_ac: {len(pv_org_dc)}")
+        logging.debug(f"pv_tot: {pv_total}")
+        logging.debug(f"pv: {solar_prod[0]}")
 
         # volledig salderen?
         salderen = self.prices_options['tax refund'] == "True"
