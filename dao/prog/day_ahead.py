@@ -1436,7 +1436,7 @@ class DaCalc(DaBase):
         logging.debug(f"Minimimal out of pocket costs: {cost_da_real}")
         cost_reg = 0
         for u in range(U):
-          cost_reg += c_l[u].x * p_grl[u] - c_t_w_tax[u].x * pgrt[u] - c_t_no_tax[u].x * pgrt[u]         # include delivery costs & lower price if no tax
+          cost_reg += c_l[u].x * p_grl[u] - c_t_w_tax[u].x * p_grt[u] - c_t_no_tax[u].x * p_grt[u]         # include delivery costs & lower price if no tax
         logging.debug(f"Regular tariff costs: {cost_reg}")
           
         if (not salderen) and (sum_old_cons < 0):
