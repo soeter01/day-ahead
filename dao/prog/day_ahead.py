@@ -1429,6 +1429,16 @@ class DaCalc(DaBase):
                 old_cost_da += netto * pt[u]
                 org_l.append(0)
                 org_t.append(netto)
+   # calculation of da total OOP costs
+        cost_da_real = 0
+        for u in range(U):
+          cost_da_real += c_l[u].x * pl[u] - c_t_w_tax[u].x * pt[u] - c_t_no_tax[u].x * pt_notax[u]
+        logging.debug(f"Minimimal out of pocket costs: {cost_da_real}")
+        cost_reg = 0
+        for u in range(U):
+          cost_reg += c_l[u].x * p_grl[u] - c_t_w_tax[u].x * pgrt[u] - c_t_no_tax[u].x * pgrt[u]         # include delivery costs & lower price if no tax
+        logging.debug(f"Regular tariff costs: {cost_reg}")
+          
         if (not salderen) and (sum_old_cons < 0):
             # er wordt (een deel) niet gesaldeerd
             dag_str = dt.datetime.now().strftime("%Y-%m-%d")
