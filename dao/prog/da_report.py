@@ -1032,7 +1032,8 @@ class Report:
         :param _source: als != None dan hier de source all, da of ha
         :return: een dataframe met de gevraagde griddata
         """
-
+        logging.basicConfig(level=logging.DEBUG)   ###
+        logging.debug("rs:get grid data")
         values_table = Table(
             "values", self.db_da.metadata, autoload_with=self.db_da.engine
         )
