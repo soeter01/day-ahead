@@ -20,6 +20,7 @@ class Report:
 
     def __init__(self, file_name: str = "../data/options.json"):
         logging.basicConfig(level=logging.DEBUG) ###
+    
         self.config = Config(file_name)
         self.db_da = self.config.get_db_da()
         self.db_ha = self.config.get_db_ha()
@@ -320,7 +321,7 @@ class Report:
         statistics_meta = Table(
             "statistics_meta", self.db_ha.metadata, autoload_with=self.db_ha.engine
         )
-        logging.basicConfig(level=logging.DEBUG) ###
+        logging.basicConfig(level=logging.DEBUG)
         # Define aliases for the tables
         t1 = statistics.alias("t1")
         t2 = statistics.alias("t2")
@@ -378,7 +379,7 @@ class Report:
         from sqlalchemy.dialects import sqlite  # , postgresql,  mysql
 
         query_str = str(query.compile(dialect=sqlite.dialect()))
-        logging.debug(f"query get sensor data:\n {query_str}")
+        bug(f"query get sensor data:\n {query_str}")
         # Execute the query and load results into a DataFrame
         with self.db_ha.engine.connect() as connection:
             df_raw = pd.read_sql(query, connection)
@@ -388,7 +389,7 @@ class Report:
         df_raw.index = df_raw[agg]  # pd.to_datetime(df_raw["tijd"])
 
         # Print the raw DataFrame
-        logging.debug(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
+        bug(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
         return df_raw
 
     @staticmethod
