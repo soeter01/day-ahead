@@ -779,6 +779,9 @@ class Report:
         last_realised_moment = datetime.datetime.fromtimestamp(
             math.floor(datetime.datetime.now().timestamp() / 3600) * 3600
         )
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug(f"get balance data: vanaf: {vanaf}, tot: {tot}, periode: {periode_d}")
+
         moment = vanaf
         while moment < tot:
             if interval == "maand":
@@ -904,6 +907,7 @@ class Report:
                             ha_result["tijd"] = pd.to_datetime(ha_result[interval])
                         ha_result.index = pd.to_datetime(ha_result["tijd"])
                         result = self.add_col_df(ha_result, result, key)
+                    logging.debug(f"result1: {result.to_string()}")
                 if ha_result is not None and len(ha_result) > 0:
                     if categorie["sensors"] == "calc":
                         now = datetime.datetime.now()
@@ -917,7 +921,8 @@ class Report:
                         )
                 else:
                     last_moment = vanaf
-
+            logging.debug(f"result2: {result.to_string()}")
+            
             if last_moment < last_realised_moment:
                 last_moment = last_realised_moment
             if last_moment < tot:
@@ -996,6 +1001,7 @@ class Report:
             if categorie["sensors"] == "calc":
                 function = categorie["function"]
                 result = getattr(self, function)(result)
+        logging.debug(f"result3: {result.to_string()}")
         return result
 
     def get_grid_data(
