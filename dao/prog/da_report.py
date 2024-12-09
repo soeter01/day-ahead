@@ -19,6 +19,7 @@ class Report:
     periodes = {}
 
     def __init__(self, file_name: str = "../data/options.json"):
+        logging.basicConfig(level=logging.DEBUG) ###
         self.config = Config(file_name)
         self.db_da = self.config.get_db_da()
         self.db_ha = self.config.get_db_ha()
@@ -700,6 +701,7 @@ class Report:
             for _ in range(len(fi_df.index)):            # Add the recorded datasoort if interval != uur and hence aggregated data is used
                 ds_help.append('recorded')
             fi_df['datasoort'] = ds_help
+        logging.debug(f"fidf: {fi_df.to_string()}")
         return fi_df
 
     def aggregate_balance_df(self, df: pd.DataFrame, interval: str):
