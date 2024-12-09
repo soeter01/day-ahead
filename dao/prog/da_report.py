@@ -379,7 +379,7 @@ class Report:
         from sqlalchemy.dialects import sqlite  # , postgresql,  mysql
 
         query_str = str(query.compile(dialect=sqlite.dialect()))
-        bug(f"query get sensor data:\n {query_str}")
+        logging.debug(f"query get sensor data:\n {query_str}")
         # Execute the query and load results into a DataFrame
         with self.db_ha.engine.connect() as connection:
             df_raw = pd.read_sql(query, connection)
@@ -389,7 +389,7 @@ class Report:
         df_raw.index = df_raw[agg]  # pd.to_datetime(df_raw["tijd"])
 
         # Print the raw DataFrame
-        bug(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
+        logging.debug(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
         return df_raw
 
     @staticmethod
