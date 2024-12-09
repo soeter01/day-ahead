@@ -389,7 +389,7 @@ class Report:
         df_raw.index = df_raw[agg]  # pd.to_datetime(df_raw["tijd"])
 
         # Print the raw DataFrame
-        logging.debug(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
+        logging.warning(f"sensordata raw, sensor {sensor},\n {df_raw.to_string()}\n")
         return df_raw
 
     @staticmethod
