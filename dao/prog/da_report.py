@@ -319,7 +319,7 @@ class Report:
         statistics_meta = Table(
             "statistics_meta", self.db_ha.metadata, autoload_with=self.db_ha.engine
         )
-
+        logging.basicConfig(level=logging.DEBUG) ###
         # Define aliases for the tables
         t1 = statistics.alias("t1")
         t2 = statistics.alias("t2")
@@ -446,6 +446,7 @@ class Report:
         # Round the  values
 
         # Print the aggregated DataFrame
+        logging.basicConfig(level=logging.DEBUG)
         logging.debug(f"sensordata aggregated:\n {df_aggregated.to_string()}\n")
         return df_aggregated
 
@@ -564,6 +565,8 @@ class Report:
             else:
                 result = self.add_col_df(df, result, col_name)
             counter = +1
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug(f"sensor_sum: {result.to_string()}")
         return result
 
     def calc_cost(
