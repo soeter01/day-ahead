@@ -14,12 +14,12 @@ import logging
 from sqlalchemy import Table, select, and_, literal, func, case
 import matplotlib.pyplot as plt
 
+logging.basicConfig(level=logging.DEBUG) ###
 
 class Report:
     periodes = {}
 
     def __init__(self, file_name: str = "../data/options.json"):
-        logging.basicConfig(level=logging.DEBUG) ###
     
         self.config = Config(file_name)
         self.db_da = self.config.get_db_da()
