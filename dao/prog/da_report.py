@@ -14,7 +14,7 @@ import logging
 from sqlalchemy import Table, select, and_, literal, func, case
 import matplotlib.pyplot as plt
 
-logging.basicConfig(level=logging.DEBUG) ###
+# logging.basicConfig(level=logging.DEBUG) ###
 
 class Report:
     periodes = {}
