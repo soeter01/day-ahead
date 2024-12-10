@@ -321,7 +321,7 @@ class Report:
         statistics_meta = Table(
             "statistics_meta", self.db_ha.metadata, autoload_with=self.db_ha.engine
         )
-        logging.basicConfig(level=logging.DEBUG)
+        
         # Define aliases for the tables
         t1 = statistics.alias("t1")
         t2 = statistics.alias("t2")
@@ -448,7 +448,6 @@ class Report:
         # Round the  values
 
         # Print the aggregated DataFrame
-        logging.basicConfig(level=logging.DEBUG)
         logging.debug(f"sensordata aggregated:\n {df_aggregated.to_string()}\n")
         return df_aggregated
 
@@ -567,8 +566,7 @@ class Report:
             else:
                 result = self.add_col_df(df, result, col_name)
             counter = +1
-        logging.basicConfig(level=logging.DEBUG)
-        logging.debug(f"sensor_sum: {result.to_string()}")
+#        logging.debug(f"sensor_sum: {result.to_string()}")
         return result
 
     def calc_cost(
@@ -702,7 +700,7 @@ class Report:
             for _ in range(len(fi_df.index)):            # Add the recorded datasoort if interval != uur and hence aggregated data is used
                 ds_help.append('recorded')
             fi_df['datasoort'] = ds_help
-        logging.debug(f"fidf: {fi_df.to_string()}")
+    #    logging.debug(f"fidf: {fi_df.to_string()}")
         return fi_df
 
     def aggregate_balance_df(self, df: pd.DataFrame, interval: str):
@@ -785,7 +783,6 @@ class Report:
         last_realised_moment = datetime.datetime.fromtimestamp(
             math.floor(datetime.datetime.now().timestamp() / 3600) * 3600
         )
-        logging.basicConfig(level=logging.DEBUG)
         logging.debug(f"get balance data: vanaf: {vanaf}, tot: {tot}, periode: {periode_d}")
 
         moment = vanaf
@@ -913,7 +910,7 @@ class Report:
                             ha_result["tijd"] = pd.to_datetime(ha_result[interval])
                         ha_result.index = pd.to_datetime(ha_result["tijd"])
                         result = self.add_col_df(ha_result, result, key)
-                    logging.debug(f"result1: {result.to_string()}")
+     #               logging.debug(f"result1: {result.to_string()}")
                 if ha_result is not None and len(ha_result) > 0:
                     if categorie["sensors"] == "calc":
                         now = datetime.datetime.now()
@@ -927,7 +924,7 @@ class Report:
                         )
                 else:
                     last_moment = vanaf
-            logging.debug(f"result2: {result.to_string()}")
+    #        logging.debug(f"result2: {result.to_string()}")
             
             if last_moment < last_realised_moment:
                 last_moment = last_realised_moment
@@ -1007,7 +1004,7 @@ class Report:
             if categorie["sensors"] == "calc":
                 function = categorie["function"]
                 result = getattr(self, function)(result)
-        logging.debug(f"result3: {result.to_string()}")
+  #      logging.debug(f"result3: {result.to_string()}")
         return result
 
     def get_grid_data(
@@ -1033,7 +1030,6 @@ class Report:
         :param _source: als != None dan hier de source all, da of ha
         :return: een dataframe met de gevraagde griddata
         """
-        logging.basicConfig(level=logging.DEBUG)   ###
         logging.debug("rs:get grid data")
         values_table = Table(
             "values", self.db_da.metadata, autoload_with=self.db_da.engine
