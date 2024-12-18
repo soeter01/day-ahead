@@ -13,11 +13,13 @@ import logging
 from sqlalchemy import Table, select, and_, literal, func, case
 import matplotlib.pyplot as plt
 
+# logging.basicConfig(level=logging.DEBUG) ###
 
 class Report:
     periodes = {}
 
     def __init__(self, file_name: str = "../data/options.json"):
+    
         self.config = Config(file_name)
         self.db_da = self.config.get_db_da()
         self.db_ha = self.config.get_db_ha()
@@ -318,7 +320,7 @@ class Report:
         statistics_meta = Table(
             "statistics_meta", self.db_ha.metadata, autoload_with=self.db_ha.engine
         )
-
+        
         # Define aliases for the tables
         t1 = statistics.alias("t1")
         t2 = statistics.alias("t2")
@@ -563,6 +565,7 @@ class Report:
             else:
                 result = self.add_col_df(df, result, col_name)
             counter = +1
+#        logging.debug(f"sensor_sum: {result.to_string()}")
         return result
 
     def calc_cost(
@@ -700,6 +703,7 @@ class Report:
                     "datasoort": get_datasoort
                 }
             )
+
         return fi_df
 
     def aggregate_balance_df(self, df: pd.DataFrame, interval: str):
@@ -782,6 +786,8 @@ class Report:
         last_realised_moment = datetime.datetime.fromtimestamp(
             math.floor(datetime.datetime.now().timestamp() / 3600) * 3600
         )
+        logging.debug(f"get balance data: vanaf: {vanaf}, tot: {tot}, periode: {periode_d}")
+
         moment = vanaf
         while moment < tot:
             if interval == "maand":
@@ -907,6 +913,7 @@ class Report:
                             ha_result["tijd"] = pd.to_datetime(ha_result[interval])
                         ha_result.index = pd.to_datetime(ha_result["tijd"])
                         result = self.add_col_df(ha_result, result, key)
+     #               logging.debug(f"result1: {result.to_string()}")
                 if ha_result is not None and len(ha_result) > 0:
                     if categorie["sensors"] == "calc":
                         now = datetime.datetime.now()
@@ -920,7 +927,8 @@ class Report:
                         )
                 else:
                     last_moment = vanaf
-
+    #        logging.debug(f"result2: {result.to_string()}")
+            
             if last_moment < last_realised_moment:
                 last_moment = last_realised_moment
             if last_moment < tot:
@@ -999,6 +1007,7 @@ class Report:
             if categorie["sensors"] == "calc":
                 function = categorie["function"]
                 result = getattr(self, function)(result)
+  #      logging.debug(f"result3: {result.to_string()}")
         return result
 
     def get_grid_data(
@@ -1024,7 +1033,7 @@ class Report:
         :param _source: als != None dan hier de source all, da of ha
         :return: een dataframe met de gevraagde griddata
         """
-
+        logging.debug("rs:get grid data")
         values_table = Table(
             "values", self.db_da.metadata, autoload_with=self.db_da.engine
         )
