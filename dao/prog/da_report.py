@@ -3221,6 +3221,7 @@ class Report(DaBase):
             sensor_data = self.get_sensor_sum(
                 sensor_list=[entity], vanaf=vanaf, tot=now, col_name="hp"
             )
+        logging.info(f"RS sensor: {sensor_data}")
         if sensor_data is None or len(sensor_data) == 0:
             sensor_data = self.get_sensor_sum(
                 sensor_list=self.wp_consumption_sensors,
@@ -3228,7 +3229,7 @@ class Report(DaBase):
                 tot=now,
                 col_name="hp",
             )
-        logging.info(f"RS sensor: {sensor_data}")
+        logging.info(f"RS cons sensor: {sensor_data}")
         if len(sensor_data) == 0:
             return -2
         count = 0
