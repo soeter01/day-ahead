@@ -4518,7 +4518,7 @@ class DaCalc(DaBase):
             ##################################################
             # heatpump
             ##################################################
-            if self.hp_present #and self.hp_enabled:           RS - er moet altijd worden geschakeld 
+            if self.hp_present: #and self.hp_enabled:           RS - er moet altijd worden geschakeld 
                 # als aan/uit entity er is altijd schakelen
                 entity_hp_switch = self.heating_options.entity_hp_switch
                 if entity_hp_switch is None:
