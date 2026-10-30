@@ -2468,6 +2468,7 @@ class DaCalc(DaBase):
                     """        
                     # running block:
                     run_hours = report.get_heatpump_run_hours()
+                    logging.info(f"RS info - Warmtepomp draait minimaal {run_hours} uur")
                     if run_hours < 0:
                         logging.info(f"Kan starturen wp niet bepalen")
                         if run_hours == -1:
@@ -4517,7 +4518,7 @@ class DaCalc(DaBase):
             ##################################################
             # heatpump
             ##################################################
-            if self.hp_present and self.hp_enabled:
+            if self.hp_present #and self.hp_enabled:           RS - er moet altijd worden geschakeld 
                 # als aan/uit entity er is altijd schakelen
                 entity_hp_switch = self.heating_options.entity_hp_switch
                 if entity_hp_switch is None:
