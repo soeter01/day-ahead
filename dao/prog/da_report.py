@@ -3235,7 +3235,7 @@ class Report(DaBase):
         count = 0
         df = sensor_data.iloc[::-1]
         for row in df.itertuples():
-            if row.hp > 0:
+            if row.hp > 0.05:            # 0.05kWh per hour is 50W base load but does not mean running
                 count += 1
             else:
                 break
