@@ -3207,12 +3207,15 @@ class Report(DaBase):
         return result
 
     def get_heatpump_run_hours(self, entity):
+        logging.info("RS get run hours")
         if entity is None or not self.wp_consumption_sensors:
             return -1
         now = datetime.datetime.now()
+        logging.info(f"RS Now: {now}")
         vanaf = datetime.datetime(
             now.year, now.month, now.day, now.hour
         ) - datetime.timedelta(hours=5)
+        logging.info(f"RS Vanaf: {vanaf}")
         sensor_data = None
         if entity is not None:
             sensor_data = self.get_sensor_sum(
@@ -3225,6 +3228,7 @@ class Report(DaBase):
                 tot=now,
                 col_name="hp",
             )
+        logging.info(f"RS sensor: {sensor_data}")
         if len(sensor_data) == 0:
             return -2
         count = 0
