@@ -2747,6 +2747,7 @@ class DaCalc(DaBase):
                 if entity_heat_produced is None
                 else report.get_heatpump_run_hours(entity_heat_produced)
             )
+            logging.info(f"RS - output: Warmtepomp draait minimaal {run_hours} uur")
             if run_hours < 0:
                 logging.info("Kan starturen wp niet bepalen")
                 if run_hours == -1:
