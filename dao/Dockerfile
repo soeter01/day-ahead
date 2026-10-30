@@ -87,4 +87,4 @@ LABEL \
     io.hass.type="app" \
     io.hass.arch="${BUILD_ARCH}" \
     org.opencontainers.image.version="${BUILD_VERSION}" \
-    org.opencontainers.image.source="https://github.com/corneel27/day-ahead"
+    org.opencontainers.image.source="https://github.com/soeter01/day-ahead"
