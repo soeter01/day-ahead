@@ -3245,6 +3245,7 @@ class Report(DaBase):
         if len(sensor_data) == 0:
             return -2
         logging.info(f"Heat: {sensor_data}")
+        logging.into(f"E_th: {eth}")
         count = 0
         df = sensor_data.iloc[::-1]
         for row in df.itertuples():
