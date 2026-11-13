@@ -3223,7 +3223,7 @@ class Report(DaBase):
 
         return result
 
-    def get_heatpump_run_hours(self, entity):
+    def get_heatpump_run_hours(self, entity, eth):
         if entity is None or not self.wp_consumption_sensors:
             return -1
         now = datetime.datetime.now()
@@ -3248,7 +3248,7 @@ class Report(DaBase):
         count = 0
         df = sensor_data.iloc[::-1]
         for row in df.itertuples():
-            if row.hp > 5.0:    # Standby usage of <50 W is not considered an indication that the pump is running
+            if row.hp > 0.8*eth+0.05:    # Standby usage of <50 W is not considered an indication that the pump is running, also if pump is assumed running full hour if generated heat is > 0.8*thermal energy
                 count += 1
             else:
                 break
