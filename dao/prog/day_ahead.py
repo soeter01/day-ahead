@@ -2342,6 +2342,8 @@ class DaCalc(DaBase):
         #####################################
         p_hp = None
         h_hp = None
+        cop = 0
+        hp_power = 0
         c_hp = [
             model.add_var(var_type=CONTINUOUS, lb=0, ub=20) for _ in range(U)
         ]  # Electricity consumption per hour
@@ -2809,7 +2811,7 @@ class DaCalc(DaBase):
             run_hours = (
                 -1
                 if entity_heat_produced is None
-                else report.get_heatpump_run_hours(entity_heat_produced)
+                else report.get_heatpump_run_hours(entity_heat_produced,cop*hp_power)
             )
             if run_hours < 0:
                 logging.info("Kan starturen wp niet bepalen")
