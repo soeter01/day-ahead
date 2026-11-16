@@ -3264,7 +3264,7 @@ class Report(DaBase):
             df_raw = pd.read_sql_query(
                 sql,
                 connection,
-                params={"sensor": sensor}
+                params={"sensor": "sensor.daily_heat_production_heating"}
             )
 
         logging.info(f"Heat production readings:\n{df_raw}")
