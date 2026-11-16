@@ -3225,6 +3225,9 @@ class Report(DaBase):
         return result
 
     def get_heatpump_run_quarters(self, entity):
+        
+        if entity is None or not self.wp_consumption_sensors:
+            return -1
 
         sql = text("""
             WITH RECURSIVE
@@ -3307,11 +3310,13 @@ class Report(DaBase):
 
         df_result = pd.DataFrame(results)
         logging.info(f"Heat production result:\n{df_result}")
-        if not df_result.empty:
+        
+        if df_result.empty:
+            return -2
+        else:
             nr_quarters = int(df_result.iloc[-1]["consecutive_quarters"])
             logging.info(f"Heat pump running for: {nr_quarters} quarters")
             return nr_quarters
-        return -1
 
     def get_heatpump_run_hours(self, entity, eth):
         if entity is None or not self.wp_consumption_sensors:
