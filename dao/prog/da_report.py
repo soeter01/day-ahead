@@ -3224,7 +3224,7 @@ class Report(DaBase):
 
         return result
         
-    def get_heatpump_run_quarters(self, entity)
+    def get_heatpump_run_quarters(self, entity):
     
         sql = text("""
             WITH RECURSIVE
