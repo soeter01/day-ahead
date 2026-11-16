@@ -3316,7 +3316,7 @@ class Report(DaBase):
         else:
             nr_quarters = int(df_result.iloc[-1]["consecutive_quarters"])
             logging.info(f"Heat pump running for: {nr_quarters} quarters")
-            return nr_quarters
+            return nr_quarters/4
 
     def get_heatpump_run_hours(self, entity, eth):
         if entity is None or not self.wp_consumption_sensors:
