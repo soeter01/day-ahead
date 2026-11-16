@@ -3268,6 +3268,36 @@ class Report(DaBase):
             )
 
         logging.info(f"Heat production readings:\n{df_raw}")
+
+        end_ts = int(df_raw["end_ts"].iloc[0])
+        previous_total = None
+        consecutive = 0
+
+        results = []
+
+        for row in df_raw.itertuples(index=False):
+            quarter_ts = int(row.quarter_ts)
+            total = row.total
+
+            if pd.isna(total) or previous_total is None:
+                heat_produced = 0
+            else:
+                heat_produced = int(float(total) > previous_total)
+
+            consecutive = consecutive + 1 if heat_produced else 0
+
+            # Ignore the initial quarter used to establish the previous reading
+            if quarter_ts > end_ts - 18000:
+                results.append({
+                    "tijd": quarter_ts,
+                    "heat_produced": heat_produced,
+                    "consecutive_quarters": consecutive
+                })
+
+            previous_total = None if pd.isna(total) else float(total)
+
+        df_result = pd.DataFrame(results)
+        logging.info(f"Heat production result:\n{df_result}")
         return 0
 
     def get_heatpump_run_hours(self, entity, eth):
