@@ -3223,9 +3223,9 @@ class Report(DaBase):
             result = result.astype(object).fillna("")
 
         return result
-        
+
     def get_heatpump_run_quarters(self, entity):
-    
+
         sql = text("""
             WITH RECURSIVE
             bounds AS (
@@ -3250,8 +3250,8 @@ class Report(DaBase):
                     FROM states s
                     JOIN states_meta m ON m.metadata_id = s.metadata_id
                     WHERE m.entity_id = :sensor
-                        AND s.last_updated_ts < q.quarter_ts
-                        AND s.state GLOB '[0-9]*'
+                      AND s.last_updated_ts < q.quarter_ts
+                      AND s.state GLOB '[0-9]*'
                     ORDER BY s.last_updated_ts DESC
                     LIMIT 1
                 ) AS total
@@ -3261,14 +3261,13 @@ class Report(DaBase):
         """)
 
         with self.db_ha.engine.connect() as connection:
-            df_raw = pd.read_sql_query(
-                sql,
-                connection,
-                params={"sensor": "sensor.daily_heat_production_heating"}
-            )
+        df_raw = pd.read_sql_query(
+            sql,
+            connection,
+            params={"sensor": entity}
+        )
 
         logging.info(f"Heat production readings:\n{df_raw}")
-
         return 0
 
     def get_heatpump_run_hours(self, entity, eth):
