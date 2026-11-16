@@ -2813,7 +2813,7 @@ class DaCalc(DaBase):
                 if entity_heat_produced is None
                 else report.get_heatpump_run_hours(entity_heat_produced,cop*hp_power)
             )
-            run_quarters = get_heatpump_run_quarters(entity_heat_produced)
+            run_quarters = report.get_heatpump_run_quarters(entity_heat_produced)
             logging.info(f"Run quarters: {run_quarters}")
             if run_hours < 0:
                 logging.info("Kan starturen wp niet bepalen")
