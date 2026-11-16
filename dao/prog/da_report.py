@@ -3287,9 +3287,19 @@ class Report(DaBase):
             consecutive = consecutive + 1 if heat_produced else 0
 
             # Ignore the initial quarter used to establish the previous reading
+ #           if quarter_ts > end_ts - 18000:
+ #               results.append({
+ #                   "tijd": quarter_ts,
+ #                   "heat_produced": heat_produced,
+ #                   "consecutive_quarters": consecutive
+ #               })
+
             if quarter_ts > end_ts - 18000:
                 results.append({
-                    "tijd": quarter_ts,
+                    "tijd": datetime.fromtimestamp(
+                                quarter_ts,
+                                ZoneInfo("Europe/Amsterdam")
+                            ).strftime("%Y-%m-%d %H:%M:%S"),
                     "heat_produced": heat_produced,
                     "consecutive_quarters": consecutive
                 })
@@ -3298,7 +3308,11 @@ class Report(DaBase):
 
         df_result = pd.DataFrame(results)
         logging.info(f"Heat production result:\n{df_result}")
-        return 0
+        if not df_result.empty:
+            nr_quarters = int(df_result.iloc[-1]["consecutive_quarters"])
+            logging.info(f"Heat pump running for: {nr_quarters} quarters")
+            return nr_quarters
+        return -1
 
     def get_heatpump_run_hours(self, entity, eth):
         if entity is None or not self.wp_consumption_sensors:
