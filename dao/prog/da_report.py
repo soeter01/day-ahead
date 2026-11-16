@@ -5,7 +5,6 @@ import itertools
 import json
 import logging
 import math
-#from sqlalchemy import text
 from io import BytesIO
 
 import matplotlib.pyplot as plt
@@ -24,8 +23,8 @@ from sqlalchemy import (
     func,
     literal,
     select,
-    union,
     text,
+    union,
     values,
 )
 
