@@ -3261,11 +3261,11 @@ class Report(DaBase):
         """)
 
         with self.db_ha.engine.connect() as connection:
-        df_raw = pd.read_sql_query(
-            sql,
-            connection,
-            params={"sensor": entity}
-        )
+            df_raw = pd.read_sql_query(
+                sql,
+                connection,
+                params={"sensor": entity}
+            )
 
         logging.info(f"Heat production readings:\n{df_raw}")
         return 0
