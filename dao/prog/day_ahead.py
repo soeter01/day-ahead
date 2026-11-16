@@ -2815,6 +2815,7 @@ class DaCalc(DaBase):
             )
             run_quarters = report.get_heatpump_run_quarters(entity_heat_produced)
             logging.info(f"Run quarters: {run_quarters}")
+            run_hours = run_quarters
             if run_hours < 0:
                 logging.info("Kan starturen wp niet bepalen")
                 if run_hours == -1:
@@ -2827,7 +2828,7 @@ class DaCalc(DaBase):
                 first_block_len = min_run_length
                 first_block_start = None
             elif run_hours < min_run_length and self.hp_heat_demand in ["eco", "max"]:
-                first_block_len = max(1, min_run_length - run_hours)
+                first_block_len = max(1, min_run_length - math.floor(run_hours))
                 first_block_start = 0
             else:  # run_hours >= min_run_length
                 first_block_len = min_run_length
