@@ -5,6 +5,7 @@ import itertools
 import json
 import logging
 import math
+from sqlalchemy import text
 from io import BytesIO
 
 import matplotlib.pyplot as plt
@@ -3222,6 +3223,53 @@ class Report(DaBase):
             result = result.astype(object).fillna("")
 
         return result
+        
+    def get_heatpump_run_quarters(self, entity)
+    
+        sql = text("""
+            WITH RECURSIVE
+            bounds AS (
+                SELECT
+                    CAST(strftime('%s','now') / 900 AS INTEGER) * 900 AS end_ts
+            ),
+            quarters(quarter_ts) AS (
+                SELECT end_ts - 18000 - 900
+                FROM bounds
+
+                UNION ALL
+
+                SELECT quarter_ts + 900
+                FROM quarters, bounds
+                WHERE quarter_ts + 900 <= bounds.end_ts
+            )
+            SELECT
+                q.quarter_ts,
+                b.end_ts,
+                (
+                    SELECT CAST(s.state AS REAL)
+                    FROM states s
+                    JOIN states_meta m ON m.metadata_id = s.metadata_id
+                    WHERE m.entity_id = :sensor
+                        AND s.last_updated_ts < q.quarter_ts
+                        AND s.state GLOB '[0-9]*'
+                    ORDER BY s.last_updated_ts DESC
+                    LIMIT 1
+                ) AS total
+            FROM quarters q
+            CROSS JOIN bounds b
+            ORDER BY q.quarter_ts
+        """)
+
+        with self.db_ha.engine.connect() as connection:
+            df_raw = pd.read_sql_query(
+                sql,
+                connection,
+                params={"sensor": sensor}
+            )
+
+        logging.info(f"Heat production readings:\n{df_raw}")
+
+        return 0
 
     def get_heatpump_run_hours(self, entity, eth):
         if entity is None or not self.wp_consumption_sensors:
@@ -3249,7 +3297,7 @@ class Report(DaBase):
         count = 0
         df = sensor_data.iloc[::-1]
         for row in df.itertuples():
-            if row.hp > 0.8*eth+0.05:    # Standby usage of <50 W is not considered an indication that the pump is running, also if pump is assumed running full hour if generated heat is > 0.8*thermal energy
+            if row.hp > 0.05:    # Standby usage of <50 W is not considered an indication that the pump is running
                 count += 1
             else:
                 break
