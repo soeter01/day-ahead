@@ -1147,7 +1147,7 @@ class Report(DaBase):
             df_raw: pd.DataFrame, col_name: str, agg: str = "uur"
     ) -> pd.DataFrame:
         df_raw["tot"] = df_raw.apply(
-            lambda x: datetime.datetime.stamp(x["tijd"]), axis=1
+            lambda x: datetime.datetime.fromtimestamp(x["tijd"]), axis=1
         )
 
         if len(df_raw) > 0:
@@ -1302,7 +1302,7 @@ class Report(DaBase):
         with self.db_da.engine.connect() as connection:
             result_row = connection.execute(query).first()
         if result_row is not None:
-            result = datetime.datetime.stamp(dict(result_row)["time"])
+            result = datetime.datetime.fromtimestamp(dict(result_row)["time"])
         else:
             result = datetime.datetime(year=2020, month=1, day=1)
         return result
