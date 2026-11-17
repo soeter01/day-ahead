@@ -136,12 +136,32 @@ class HeatingEnabled(BaseModel):
             "x-ui-widget-filter": "binary_sensor",
         },
     )
+    mode: Literal["heating", "cooling"] = Field(
+        default="heating",
+        alias="heatpump mode",
+        description="Heatpump mode: heeating or cooling",
+        json_schema_extra={
+            "x-help": "Mode of the heatpump. Either heating or cooling",
+            "x-ui-section": "Configuration",
+        },
+    )
     degree_days_factor: FlexFloat = Field(
         default=FlexFloat(value=1.0),
         alias="degree days factor",
         description="Degree days factor for heat demand calculation",
         json_schema_extra={
             "x-help": "Multiplier for degree-day heat demand calculation. Adjust based on building insulation and heat loss. Higher = more heat needed. Typical: 0.5-2.0.",
+            "x-unit": "factor",
+            "x-ui-section": "Configuration",
+            "x-validation-hint": "Must be > 0, typically 0.5-10.0",
+        },
+    )
+    degree_days_factor_cooling: FlexFloat = Field(
+        default=FlexFloat(value=1.0),
+        alias="degree days factor cooling",
+        description="Degree days factor for cooling demand calculation",
+        json_schema_extra={
+            "x-help": "Multiplier for degree-day cool demand calculation. Adjust based on building insulation and heat loss. Higher = more cooling needed. Typical: 0.5-2.0.",
             "x-unit": "factor",
             "x-ui-section": "Configuration",
             "x-validation-hint": "Must be > 0, typically 0.5-10.0",
@@ -161,6 +181,22 @@ class HeatingEnabled(BaseModel):
             "x-unit": "°C",
             "x-ui-section": "Configuration",
             "x-validation-hint": "Between 0 and 30, typically 15-18",
+        },
+    )
+    degree_days_base_temperature_cooling: float = Field(
+        default=22.0,
+        ge=0.0,
+        le=30.0,
+        description="Base temperature (heating limit) for degree days",
+        json_schema_extra={
+            "x-help": "Average daily outdoor temperature in °C at and above which coolingno is needed. "
+            "Heat demand is calculated from the degree days above this temperature: "
+            "(average outdoor temperature - base temperature) per day. "
+            "Lower it if your cooling is needed at a lower outdoor temperature, higher for a well-insulated house. "
+            "Default: 22 °C.",
+            "x-unit": "°C",
+            "x-ui-section": "Configuration",
+            "x-validation-hint": "Between 0 and 30, typically 22-25",
         },
     )
     adjustment: Literal["on/off", "power", "heating curve"] = Field(
