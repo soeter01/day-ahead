@@ -2342,8 +2342,6 @@ class DaCalc(DaBase):
         #####################################
         p_hp = None
         h_hp = None
-        cop = 0
-        hp_power = 0
         c_hp = [
             model.add_var(var_type=CONTINUOUS, lb=0, ub=20) for _ in range(U)
         ]  # Electricity consumption per hour
