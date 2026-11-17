@@ -2371,7 +2371,7 @@ class DaCalc(DaBase):
             hp_mode = self.heating_options.hp_mode.resolve(
                     self.ha_getter
             )
-            if hp_mode is None
+            if hp_mode is None:
                 hp_mode = "heating"
             logging.info(f"Warmtepomp modus: {hp_mode}")
             
