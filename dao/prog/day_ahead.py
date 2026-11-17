@@ -2366,41 +2366,91 @@ class DaCalc(DaBase):
         if self.hp_enabled:
             # "adjustment" : keuze uit "on/off" | "power" | "heating curve", default "power"
             self.hp_adjustment = (self.heating_options.adjustment or "power").lower()
+            
+            # Heat pump mode: "heating" or "cooling", default "heating"
+            hp_mode = self.heating_options.hp_mode.resolve(
+                    self.ha_getter
+            if hp_mode is None
+                hp_mode = "heating"
+            logging.info(f"Warmtepomp modus: {hp_mode}")
+            
             # degree days
-            base_temp = self.heating_options.degree_days_base_temperature
-            logging.info(f"Stookgrens (graaddagen): {base_temp:.1f} °C")
-            degree_days_today = self.meteo.calc_graaddagen(
-                date=calc_day, weighted=True, base_temp=base_temp
-            )
-            logging.info(f"Gewogen graaddagen vandaag: {degree_days_today:.1f} K.day")
-            if U > self.steps_day:
-                degree_days_tomorrow = self.meteo.calc_graaddagen(
-                    date=calc_day + dt.timedelta(days=1),
-                    weighted=True,
-                    base_temp=base_temp,
+            if hp_mode == "heating":
+                base_temp = self.heating_options.degree_days_base_temperature
+                logging.info(f"Stookgrens (graaddagen): {base_temp:.1f} °C")
+                degree_days_today = self.meteo.calc_graaddagen(
+                    date=calc_day, weighted=True, base_temp=base_temp
                 )
-                logging.info(
-                    f"Gewogen graaddagen morgen: {degree_days_tomorrow:.1f} K.day"
-                )
-            else:
-                degree_days_tomorrow = 0
-            degree_days = degree_days_today + degree_days_tomorrow
-            logging.info(f"Gewogen graaddagen totaal: {degree_days:.1f} K.day")
+                logging.info(f"Gewogen graaddagen vandaag: {degree_days_today:.1f} K.day")
+                if U > self.steps_day:
+                    degree_days_tomorrow = self.meteo.calc_graaddagen(
+                        date=calc_day + dt.timedelta(days=1),
+                        weighted=True,
+                        base_temp=base_temp,
+                    )
+                    logging.info(
+                        f"Gewogen graaddagen morgen: {degree_days_tomorrow:.1f} K.day"
+                    )
+                else:
+                    degree_days_tomorrow = 0
+                degree_days = degree_days_today + degree_days_tomorrow
+                logging.info(f"Gewogen graaddagen totaal: {degree_days:.1f} K.day")
 
-            # degree days factor kWh th / K.day
-            degree_days_factor = self.heating_options.degree_days_factor.resolve(
-                self.ha_getter
-            )
-            if degree_days_factor < 0.1:
-                logging.warning(
-                    f"Je graaddag factor ({degree_days_factor:.4f} kWh/K.day) "
-                    f"staat heel laag ingesteld. klopt dit wel?"
+                # degree days factor kWh th / K.day
+                degree_days_factor = self.heating_options.degree_days_factor.resolve(
+                    self.ha_getter
                 )
-            else:
-                logging.info(f"Degree days factor: {degree_days_factor:.1f} kWh/K.day")
-            logging.info(
-                f"Totaal benodigde warmte: {(degree_days * degree_days_factor):.1f} kWh"
-            )
+                if degree_days_factor < 0.1:
+                    logging.warning(
+                        f"Je graaddag factor ({degree_days_factor:.4f} kWh/K.day) "
+                        f"staat heel laag ingesteld. klopt dit wel?"
+                    )
+                else:
+                    logging.info(f"Degree days factor: {degree_days_factor:.1f} kWh/K.day")
+                logging.info(
+                    f"Totaal benodigde warmte: {(degree_days * degree_days_factor):.1f} kWh"
+                )
+            else:    # mode is cooling
+                base_temp = self.heating_options.degree_days_base_temperature_cooling
+                logging.info(f"Koelgrens (graaddagen): {base_temp:.1f} °C")
+                avg_temp_today = self.meteo.get_avg_temperature(calc_day)
+                logging.info(
+                        f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
+                )
+                degree_days_today = max(0.0, avg_temp_today - base_temp)
+                if U > self.steps_day:
+                    avg_temp_tomorrow = self.meteo.get_avg_temperature(
+                            date=calc_day + dt.timedelta(days=1)
+                    )
+                    logging.info(
+                            f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
+                    )
+                    avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
+                    degree_days_tomorrow = max(0.0, avg_temp_tomorrow - base_temp)
+                    degree_days = degree_days_today + degree_days_tomorrow
+                else:
+                    degree_days_tomorrow = 0
+                    avg_temp = avg_temp_today
+                degree_days = degree_days_today + degree_days_tomorrow
+                logging.info(f"Graaddagen koeling totaal: {degree_days:.1f} K.day")
+                logging.info(
+                        f"Voorspelde gemiddelde buiten temperatuur: {avg_temp:.1f} °C"
+                )
+                
+                # degree days factor cooling kWh th / K.day
+                degree_days_factor = self.heating_options.degree_days_factor_cooling.resolve(
+                    self.ha_getter
+                )
+                if degree_days_factor < 0.1:
+                    logging.warning(
+                        f"Je koel graaddag factor ({degree_days_factor:.4f} kWh/K.day) "
+                        f"staat heel laag ingesteld. klopt dit wel?"
+                    )
+                else:
+                    logging.info(f"Degree days factor cooling: {degree_days_factor:.1f} kWh/K.day")
+                logging.info(
+                    f"Totaal benodigde koelwarmte: {(degree_days * degree_days_factor):.1f} kWh"
+                )
 
             # heat produced
             entity_heat_produced = self.heating_options.entity_heat_produced
