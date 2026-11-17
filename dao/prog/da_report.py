@@ -3308,7 +3308,7 @@ class Report(DaBase):
             logging.info(f"Heat pump running for: {nr_quarters} quarters")
             return nr_quarters/4
 
-    def get_heatpump_run_hours(self, entity, eth):
+    def get_heatpump_run_hours(self, entity):
         if entity is None or not self.wp_consumption_sensors:
             return -1
         now = datetime.datetime.now()
@@ -3329,8 +3329,7 @@ class Report(DaBase):
             )
         if len(sensor_data) == 0:
             return -2
-        logging.info(f"Heat: {sensor_data}")
-        logging.info(f"E_th: {eth}")
+        
         count = 0
         df = sensor_data.iloc[::-1]
         for row in df.itertuples():
