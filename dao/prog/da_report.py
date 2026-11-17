@@ -1615,7 +1615,7 @@ class Report(DaBase):
         if col_dict is None:
             col_dict = self.energy_balance_dict
 
-        last_realised_moment = datetime.datetime.timestamp(
+        last_realised_moment = datetime.datetime.fromtimestamp(
             math.floor(datetime.datetime.now().timestamp() / 3600) * 3600
         )
         result = self.generate_df(vanaf, tot, periode_d["interval"], interval)
@@ -2809,7 +2809,7 @@ class Report(DaBase):
                 factor = 1
             # Convert UNIX timestamps to datetime
             df_raw["tijd"] = df_raw.apply(
-                lambda x: datetime.datetime.timestamp(x["tijd"]), axis=1
+                lambda x: datetime.datetime.fromtimestamp(x["tijd"]), axis=1
             )
             # Calculate the value
             df_raw[col_name] = df_raw.apply(
