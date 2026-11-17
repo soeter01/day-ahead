@@ -3226,7 +3226,7 @@ class Report(DaBase):
 
     def get_heatpump_run_quarters(self, entity):
         
-        if entity is None or not self.wp_consumption_sensors:
+        if entity is None:
             return -1
 
         sql = text("""
@@ -3270,8 +3270,6 @@ class Report(DaBase):
                 params={"sensor": entity}
             )
 
-        logging.info(f"Heat production readings:\n{df_raw}")
-
         end_ts = int(df_raw["end_ts"].iloc[0])
         previous_total = None
         consecutive = 0
@@ -3288,14 +3286,6 @@ class Report(DaBase):
                 heat_produced = int(float(total) > previous_total)
 
             consecutive = consecutive + 1 if heat_produced else 0
-
-            # Ignore the initial quarter used to establish the previous reading
- #           if quarter_ts > end_ts - 18000:
- #               results.append({
- #                   "tijd": quarter_ts,
- #                   "heat_produced": heat_produced,
- #                   "consecutive_quarters": consecutive
- #               })
 
             if quarter_ts > end_ts - 18000:
                 results.append({
