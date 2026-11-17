@@ -2808,18 +2808,12 @@ class DaCalc(DaBase):
                     model += hp_on[u] == 1
 
             # running block:
-#            run_hours = (
-#                -1
-#                if entity_heat_produced is None
-#                else report.get_heatpump_run_hours(entity_heat_produced,cop*hp_power)
-#            )
             run_hours = (
                 -1
                 if entity_heat_produced is None
                 else report.get_heatpump_run_quarters(entity_heat_produced)
             )
             logging.info(f"Run hours: {run_hours}")
-#            run_hours = run_quarters
             if run_hours < 0:
                 logging.info("Kan starturen wp niet bepalen")
                 if run_hours == -1:
