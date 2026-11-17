@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from ..base import EntityId, FlexFloat, FlexStr
+from ..base import EntityId, FlexFloat
 
 
 class HeatingStage(BaseModel):
@@ -136,7 +136,7 @@ class HeatingEnabled(BaseModel):
             "x-ui-widget-filter": "binary_sensor",
         },
     )
-    mode: FlexStr = Field(
+    mode: Literal["heating", "cooling"] = Field(
         default="heating",
         alias="heatpump mode",
         description="Heatpump mode: heating or cooling",
