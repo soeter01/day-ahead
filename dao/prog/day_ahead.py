@@ -2813,7 +2813,11 @@ class DaCalc(DaBase):
                 if entity_heat_produced is None
                 else report.get_heatpump_run_hours(entity_heat_produced,cop*hp_power)
             )
-            run_quarters = report.get_heatpump_run_quarters(entity_heat_produced)
+            run_quarters = (
+                -1
+                if entity_heat_produced is None
+                else report.get_heatpump_run_quarters(entity_heat_produced)
+            )
             logging.info(f"Run quarters: {run_quarters}")
             run_hours = run_quarters
             if run_hours < 0:
@@ -2830,6 +2834,7 @@ class DaCalc(DaBase):
             elif run_hours < min_run_length and self.hp_heat_demand in ["eco", "max"]:
                 first_block_len = max(1, min_run_length - math.floor(run_hours))
                 first_block_start = 0
+                logging.info("Warmtepomp draait korter dan minimum run lengte: nu inplannen")
             else:  # run_hours >= min_run_length
                 first_block_len = min_run_length
                 first_block_start = None
