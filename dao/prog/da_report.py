@@ -3299,13 +3299,13 @@ class Report(DaBase):
             previous_total = None if pd.isna(total) else float(total)
 
         df_result = pd.DataFrame(results)
-        logging.info(f"Heat production result:\n{df_result}")
+        logging.debug(f"Heat production by quarter:\n{df_result}")
         
         if df_result.empty:
             return -2
         else:
             nr_quarters = int(df_result.iloc[-1]["consecutive_quarters"])
-            logging.info(f"Heat pump running for: {nr_quarters} quarters")
+            logging.debug(f"Heat pump running for: {nr_quarters} quarters")
             return nr_quarters/4
 
     def get_heatpump_run_hours(self, entity):
