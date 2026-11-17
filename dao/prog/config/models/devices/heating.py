@@ -136,10 +136,10 @@ class HeatingEnabled(BaseModel):
             "x-ui-widget-filter": "binary_sensor",
         },
     )
-    mode: Literal["heating", "cooling"] = Field(
+    mode: FlexStr = Field(
         default="heating",
         alias="heatpump mode",
-        description="Heatpump mode: heeating or cooling",
+        description="Heatpump mode: heating or cooling",
         json_schema_extra={
             "x-help": "Mode of the heatpump. Either heating or cooling",
             "x-ui-section": "Configuration",
