@@ -2368,11 +2368,9 @@ class DaCalc(DaBase):
             self.hp_adjustment = (self.heating_options.adjustment or "power").lower()
             
             # Heat pump mode: "heating" or "cooling", default "heating"
-            hp_mode = self.heating_options.mode.resolve(
-                    self.ha_getter
-            )
-          #  if hp_mode is None:
-          #      hp_mode = "heating"
+            hp_mode = self.heating_options.mode
+            if hp_mode is None:
+                hp_mode = "heating"
             logging.info(f"Warmtepomp modus: {hp_mode}")
             
             # degree days
