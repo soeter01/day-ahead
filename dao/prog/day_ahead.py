@@ -2369,14 +2369,30 @@ class DaCalc(DaBase):
             
             # Heat pump mode: "heating" or "cooling", default "heating"
             hp_mode = self.heating_options.mode.resolve(self.ha_getter)
+            if hp_mode is None:
+                hp_mode = "heating"
+    
             if hp_mode in ("cool", "cooling"):
                 hp_mode = "cooling"
             else:
                 hp_mode = "heating"
-
-            if hp_mode is None:
-                hp_mode = "heating"
             logging.info(f"Warmtepomp modus: {hp_mode}")
+
+            avg_temp_today = self.meteo.get_avg_temperature(calc_day)
+            logging.info(
+                    f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
+            )
+            if U > self.steps_day:
+                avg_temp_tomorrow = self.meteo.get_avg_temperature(
+                            date=calc_day + dt.timedelta(days=1)
+                )
+                logging.info(
+                        f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
+                )
+                avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
+            else:
+                avg_temp = avg_temp_today
+            logging.info(f"Gem. buitentemperatuur vandaag/morgen: {avg_temp:.1f} °C")
             
             # degree days
             if hp_mode == "heating":
@@ -2417,23 +2433,24 @@ class DaCalc(DaBase):
             else:    # mode is cooling
                 base_temp = self.heating_options.degree_days_base_temperature_cooling
                 logging.info(f"Koelgrens (graaddagen): {base_temp:.1f} °C")
-                avg_temp_today = self.meteo.get_avg_temperature(calc_day)
-                logging.info(
-                        f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
-                )
+
+  #              avg_temp_today = self.meteo.get_avg_temperature(calc_day)
+  #              logging.info(
+  #                      f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
+  #              )
                 degree_days_today = max(0.0, avg_temp_today - base_temp)
                 if U > self.steps_day:
-                    avg_temp_tomorrow = self.meteo.get_avg_temperature(
-                            date=calc_day + dt.timedelta(days=1)
-                    )
-                    logging.info(
-                            f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
-                    )
-                    avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
+    #                avg_temp_tomorrow = self.meteo.get_avg_temperature(
+    #                        date=calc_day + dt.timedelta(days=1)
+    #                )
+    #                logging.info(
+    #                        f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
+    #                )
+    #                avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
                     degree_days_tomorrow = max(0.0, avg_temp_tomorrow - base_temp)
                 else:
                     degree_days_tomorrow = 0
-                    avg_temp = avg_temp_today
+     #               avg_temp = avg_temp_today
                 degree_days = degree_days_today + degree_days_tomorrow
                 logging.info(f"Graaddagen koeling totaal: {degree_days:.1f} K.day")
                 logging.info(
@@ -2520,6 +2537,8 @@ class DaCalc(DaBase):
                 logging.info(f"Beschikbaar zijn: {hours_avail} uur")
                 if heat_needed > 0:
                     logging.info("On/off warmtepomp wordt ingepland")
+                    
+                    """
                     avg_temp_today = self.meteo.get_avg_temperature(calc_day)
                     logging.info(
                         f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
@@ -2534,6 +2553,8 @@ class DaCalc(DaBase):
                         avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
                     else:
                         avg_temp = avg_temp_today
+                    """
+                    
                     entity_avg_temp = self.heating_options.entity_avg_outside_temp
                     if entity_avg_temp is None:
                         logging.warning(
