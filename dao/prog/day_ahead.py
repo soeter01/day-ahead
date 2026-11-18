@@ -2431,7 +2431,6 @@ class DaCalc(DaBase):
                     )
                     avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
                     degree_days_tomorrow = max(0.0, avg_temp_tomorrow - base_temp)
-                    degree_days = degree_days_today + degree_days_tomorrow
                 else:
                     degree_days_tomorrow = 0
                     avg_temp = avg_temp_today
@@ -2462,13 +2461,13 @@ class DaCalc(DaBase):
                 heat_produced = float(self.get_state(entity_heat_produced).state)
             else:
                 heat_produced = 0
-            logging.info(f"Reeds geproduceerde warmte: {heat_produced:.1f} kWh")
+            logging.info(f"Reeds geproduceerde warmte/koeling: {heat_produced:.1f} kWh")
 
             # heat needed
             heat_needed = max(0.0, (degree_days * degree_days_factor) - heat_produced)
-            logging.info(f"Nog benodigde warmte: {heat_needed:.1f} kWh")
+            logging.info(f"Nog benodigde warmte/koeling: {heat_needed:.1f} kWh")
             if heat_needed <= 0:
-                logging.info("Geen warmte nodig: warmtepomp wordt niet ingepland")
+                logging.info("Geen warmte/koeling nodig: warmtepomp wordt niet ingepland")
                 self.hp_enabled = False
 
         if not self.hp_enabled:
