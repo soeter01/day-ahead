@@ -2434,24 +2434,13 @@ class DaCalc(DaBase):
                 base_temp = self.heating_options.degree_days_base_temperature_cooling
                 logging.info(f"Koelgrens (graaddagen): {base_temp:.1f} °C")
 
-  #              avg_temp_today = self.meteo.get_avg_temperature(calc_day)
-  #              logging.info(
-  #                      f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
-  #              )
                 degree_days_today = max(0.0, avg_temp_today - base_temp)
                 if U > self.steps_day:
-    #                avg_temp_tomorrow = self.meteo.get_avg_temperature(
-    #                        date=calc_day + dt.timedelta(days=1)
-    #                )
-    #                logging.info(
-    #                        f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
-    #                )
-    #                avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
                     degree_days_tomorrow = max(0.0, avg_temp_tomorrow - base_temp)
                 else:
                     degree_days_tomorrow = 0
-     #               avg_temp = avg_temp_today
                 degree_days = degree_days_today + degree_days_tomorrow
+                
                 logging.info(f"Graaddagen koeling totaal: {degree_days:.1f} K.day")
                 logging.info(
                         f"Voorspelde gemiddelde buiten temperatuur: {avg_temp:.1f} °C"
