@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from ..base import EntityId, FlexFloat
+from ..base import EntityId, FlexFloat, FlexStr
 
 
 class HeatingStage(BaseModel):
