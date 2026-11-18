@@ -3228,48 +3228,66 @@ class Report(DaBase):
         
         if entity is None:
             return -1
-
+            
         sql = text("""
             WITH RECURSIVE
             bounds AS (
                 SELECT
-                    CAST(strftime('%s','now') / 900 AS INTEGER) * 900 AS end_ts
+                    :start_ts AS start_ts,
+                    :end_ts AS end_ts
             ),
-            quarters(quarter_ts) AS (
-                SELECT end_ts - 18000 - 900
+            quarters AS (
+                SELECT start_ts AS quarter_ts
                 FROM bounds
 
                 UNION ALL
 
-                SELECT quarter_ts + 900
-                FROM quarters, bounds
-                WHERE quarter_ts + 900 <= bounds.end_ts
+                SELECT q.quarter_ts + 900
+                FROM quarters q
+                CROSS JOIN bounds b
+                WHERE q.quarter_ts + 900 <= b.end_ts
+            ),
+            endpoints AS (
+                SELECT quarter_ts FROM quarters
+                UNION
+                SELECT :now_ts
             )
             SELECT
                 q.quarter_ts,
                 b.end_ts,
                 (
-                    SELECT CAST(s.state AS REAL)
+                    SELECT CAST(s.state AS FLOAT)
                     FROM states s
                     JOIN states_meta m ON m.metadata_id = s.metadata_id
                     WHERE m.entity_id = :sensor
                       AND s.last_updated_ts < q.quarter_ts
-                      AND s.state GLOB '[0-9]*'
+                      AND s.state NOT IN ('unknown', 'unavailable', '')
                     ORDER BY s.last_updated_ts DESC
                     LIMIT 1
                 ) AS total
-            FROM quarters q
+            FROM endpoints q
             CROSS JOIN bounds b
             ORDER BY q.quarter_ts
         """)
+
+        now_ts = int(time.time())
+        end_ts = (now_ts // 900) * 900
+        start_ts = end_ts - 18000 - 900
 
         with self.db_ha.engine.connect() as connection:
             df_raw = pd.read_sql_query(
                 sql,
                 connection,
-                params={"sensor": entity}
+                params={
+                    "sensor": entity,
+                    "start_ts": start_ts,
+                    "end_ts": end_ts,
+                    "now_ts": now_ts,
+                }
             )
 
+        if df_raw.empty:
+            return -2
         end_ts = int(df_raw["end_ts"].iloc[0])
         previous_total = None
         consecutive = 0
