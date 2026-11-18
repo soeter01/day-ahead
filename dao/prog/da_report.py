@@ -3270,7 +3270,8 @@ class Report(DaBase):
             ORDER BY q.quarter_ts
         """)
 
-        now_ts = int(time.time())
+        now = datetime.datetime.now()
+        now_ts = int(now.timestamp())
         end_ts = (now_ts // 900) * 900
         start_ts = end_ts - 18000 - 900
 
