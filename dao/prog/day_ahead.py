@@ -2527,23 +2527,6 @@ class DaCalc(DaBase):
                 if heat_needed > 0:
                     logging.info("On/off warmtepomp wordt ingepland")
                     
-                    """
-                    avg_temp_today = self.meteo.get_avg_temperature(calc_day)
-                    logging.info(
-                        f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
-                    )
-                    if U > self.steps_day:
-                        avg_temp_tomorrow = self.meteo.get_avg_temperature(
-                            date=calc_day + dt.timedelta(days=1)
-                        )
-                        logging.info(
-                            f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
-                        )
-                        avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
-                    else:
-                        avg_temp = avg_temp_today
-                    """
-                    
                     entity_avg_temp = self.heating_options.entity_avg_outside_temp
                     if entity_avg_temp is None:
                         logging.warning(
