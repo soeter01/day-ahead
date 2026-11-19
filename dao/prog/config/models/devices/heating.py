@@ -137,7 +137,7 @@ class HeatingEnabled(BaseModel):
         },
     )
     mode: FlexStr = Field(
-        default="heating",
+        default=FlexStr(value="heating"),
         alias="heatpump mode",
         description="Heatpump mode: heating or cooling",
         json_schema_extra={
