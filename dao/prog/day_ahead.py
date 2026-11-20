@@ -2466,13 +2466,13 @@ class DaCalc(DaBase):
                 heat_produced = float(self.get_state(entity_heat_produced).state)
             else:
                 heat_produced = 0
-            logging.info(f"Reeds geproduceerde warmte: {heat_produced:.1f} kWh")
+            logging.info(f"Reeds geproduceerde warmte of koeling: {heat_produced:.1f} kWh")
 
             # heat needed
             heat_needed = max(0.0, (degree_days * degree_days_factor) - heat_produced)
-            logging.info(f"Nog benodigde warmte: {heat_needed:.1f} kWh")
+            logging.info(f"Nog benodigde warmte of koeling: {heat_needed:.1f} kWh")
             if heat_needed <= 0:
-                logging.info("Geen warmte nodig: warmtepomp wordt niet ingepland")
+                logging.info("Geen warmte of koeling nodig: warmtepomp wordt niet ingepland")
                 self.hp_enabled = False
 
         if not self.hp_enabled:
