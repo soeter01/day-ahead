@@ -2367,16 +2367,19 @@ class DaCalc(DaBase):
             # "adjustment" : keuze uit "on/off" | "power" | "heating curve", default "power"
             self.hp_adjustment = (self.heating_options.adjustment or "power").lower()
             
-            # Heat pump mode: "heating" or "cooling", default "heating"
-            hp_mode = self.heating_options.mode.resolve(self.ha_getter)
-            if hp_mode is None:
-                hp_mode = "heating"
+            # Heat pump mode: "heating" or "cooling", default "heating" - only supported for on/off heatpump
+            if self.hp_adjustment == "on/off":
+                hp_mode = self.heating_options.mode.resolve(self.ha_getter)
+                if hp_mode is None:
+                    hp_mode = "heating"
     
-            if hp_mode in ("cool", "cooling"):
-                hp_mode = "cooling"
+                if hp_mode in ("cool", "cooling"):
+                    hp_mode = "cooling"
+                else:
+                    hp_mode = "heating"
+                logging.info(f"Warmtepomp modus: {hp_mode}")
             else:
                 hp_mode = "heating"
-            logging.info(f"Warmtepomp modus: {hp_mode}")
 
             avg_temp_today = self.meteo.get_avg_temperature(calc_day)
             logging.info(
@@ -2442,10 +2445,7 @@ class DaCalc(DaBase):
                 degree_days = degree_days_today + degree_days_tomorrow
                 
                 logging.info(f"Graaddagen koeling totaal: {degree_days:.1f} K.day")
-                logging.info(
-                        f"Voorspelde gemiddelde buiten temperatuur: {avg_temp:.1f} °C"
-                )
-                
+                               
                 # degree days factor cooling kWh th / K.day
                 degree_days_factor = self.heating_options.degree_days_factor_cooling.resolve(
                     self.ha_getter
@@ -2467,13 +2467,13 @@ class DaCalc(DaBase):
                 heat_produced = float(self.get_state(entity_heat_produced).state)
             else:
                 heat_produced = 0
-            logging.info(f"Reeds geproduceerde warmte/koeling: {heat_produced:.1f} kWh")
+            logging.info(f"Reeds geproduceerde warmte: {heat_produced:.1f} kWh")
 
             # heat needed
             heat_needed = max(0.0, (degree_days * degree_days_factor) - heat_produced)
-            logging.info(f"Nog benodigde warmte/koeling: {heat_needed:.1f} kWh")
+            logging.info(f"Nog benodigde warmte: {heat_needed:.1f} kWh")
             if heat_needed <= 0:
-                logging.info("Geen warmte/koeling nodig: warmtepomp wordt niet ingepland")
+                logging.info("Geen warmte nodig: warmtepomp wordt niet ingepland")
                 self.hp_enabled = False
 
         if not self.hp_enabled:
@@ -2534,10 +2534,7 @@ class DaCalc(DaBase):
                         )
                     else:
                         self.set_value(entity_avg_temp, round(avg_temp, 1))
-                    logging.info(
-                        f"Voorspelde gemiddelde buiten temperatuur: {avg_temp:.1f} °C"
-                    )
-
+                    
                     # Get COP and heatpump power from HA
                     entity_hp_cop = self.heating_options.entity_hp_cop
                     if entity_hp_cop is not None:
