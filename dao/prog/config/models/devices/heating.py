@@ -187,12 +187,12 @@ class HeatingEnabled(BaseModel):
         default=22.0,
         ge=0.0,
         le=30.0,
-        description="Base temperature (heating limit) for degree days",
+        description="Base temperature (cooling limit) for degree days",
         json_schema_extra={
-            "x-help": "Average daily outdoor temperature in °C at and above which coolingno is needed. "
-            "Heat demand is calculated from the degree days above this temperature: "
+            "x-help": "Average daily outdoor temperature in °C at and above which cooling is needed. "
+            "Cooling demand is calculated from the degree days above this temperature: "
             "(average outdoor temperature - base temperature) per day. "
-            "Lower it if your cooling is needed at a lower outdoor temperature, higher for a well-insulated house. "
+            "Lower it if your cooling is needed at a lower outdoor temperature. "
             "Default: 22 °C.",
             "x-unit": "°C",
             "x-ui-section": "Configuration",
