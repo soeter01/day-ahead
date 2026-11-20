@@ -2372,30 +2372,29 @@ class DaCalc(DaBase):
                 hp_mode = self.heating_options.mode.resolve(self.ha_getter)
                 if hp_mode is None:
                     hp_mode = "heating"
-    
                 if hp_mode in ("cool", "cooling"):
                     hp_mode = "cooling"
                 else:
                     hp_mode = "heating"
                 logging.info(f"Warmtepomp modus: {hp_mode}")
+                
+                avg_temp_today = self.meteo.get_avg_temperature(calc_day)
+                logging.info(
+                        f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
+                )
+                if U > self.steps_day:
+                    avg_temp_tomorrow = self.meteo.get_avg_temperature(
+                            date=calc_day + dt.timedelta(days=1)
+                    )
+                    logging.info(
+                        f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
+                    )
+                    avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
+                else:
+                    avg_temp = avg_temp_today
+                logging.info(f"Gem. buitentemperatuur vandaag/morgen: {avg_temp:.1f} °C")
             else:
                 hp_mode = "heating"
-
-            avg_temp_today = self.meteo.get_avg_temperature(calc_day)
-            logging.info(
-                    f"Gem. buitentemperatuur vandaag: {avg_temp_today:.1f} °C"
-            )
-            if U > self.steps_day:
-                avg_temp_tomorrow = self.meteo.get_avg_temperature(
-                            date=calc_day + dt.timedelta(days=1)
-                )
-                logging.info(
-                        f"Gem. buitentemperatuur morgen: {avg_temp_tomorrow:.1f} °C"
-                )
-                avg_temp = (avg_temp_today + avg_temp_tomorrow) / 2
-            else:
-                avg_temp = avg_temp_today
-            logging.info(f"Gem. buitentemperatuur vandaag/morgen: {avg_temp:.1f} °C")
             
             # degree days
             if hp_mode == "heating":
@@ -2433,7 +2432,7 @@ class DaCalc(DaBase):
                 logging.info(
                     f"Totaal benodigde warmte: {(degree_days * degree_days_factor):.1f} kWh"
                 )
-            else:    # mode is cooling
+            else:    # mode is cooling (only for on/off heatpump)
                 base_temp = self.heating_options.degree_days_base_temperature_cooling
                 logging.info(f"Koelgrens (graaddagen): {base_temp:.1f} °C")
 
