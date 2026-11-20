@@ -141,7 +141,7 @@ class HeatingEnabled(BaseModel):
         alias="heatpump mode",
         description="Heatpump mode: heating or cooling",
         json_schema_extra={
-            "x-help": "Mode of the heatpump. Either heating or cooling",
+            "x-help": "Mode of the heatpump. Either heating or cooling. Only available for on/off heatpump.",
             "x-ui-section": "Configuration",
         },
     )
@@ -150,7 +150,7 @@ class HeatingEnabled(BaseModel):
         alias="degree days factor",
         description="Degree days factor for heat demand calculation",
         json_schema_extra={
-            "x-help": "Multiplier for degree-day heat demand calculation. Adjust based on building insulation and heat loss. Higher = more heat needed. Typical: 0.5-2.0.",
+            "x-help": "Multiplier for degree-day heat demand calculation. Adjust based on building insulation and heat loss. Higher = more heat needed. Typical: 0.5-5.0.",
             "x-unit": "factor",
             "x-ui-section": "Configuration",
             "x-validation-hint": "Must be > 0, typically 0.5-10.0",
@@ -161,7 +161,7 @@ class HeatingEnabled(BaseModel):
         alias="degree days factor cooling",
         description="Degree days factor for cooling demand calculation",
         json_schema_extra={
-            "x-help": "Multiplier for degree-day cool demand calculation. Adjust based on building insulation and heat loss. Higher = more cooling needed. Typical: 0.5-2.0.",
+            "x-help": "Multiplier for degree-day cool demand calculation. Adjust based on building insulation and heat loss. Higher = more cooling needed. Typical: 0.5-5.0.",
             "x-unit": "factor",
             "x-ui-section": "Configuration",
             "x-validation-hint": "Must be > 0, typically 0.5-10.0",
