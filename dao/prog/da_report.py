@@ -3328,7 +3328,9 @@ class Report(DaBase):
             if pd.isna(total) or previous_total is None:
                 heat_produced = 0
             else:
-                heat_produced = int(float(total) != previous_total)
+                difference = float(total) - previous_total
+                heat_produced = int(difference > 0.1 or difference < 0) # Ensure small energy production between 15' intervals and calculation interval less than say 2' later is not counted
+ #               heat_produced = int(float(total) != previous_total)
 
             consecutive = consecutive + 1 if heat_produced else 0
 
