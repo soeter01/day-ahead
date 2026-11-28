@@ -3329,7 +3329,7 @@ class Report(DaBase):
                 heat_produced = 0
             else:
                 difference = float(total) - previous_total
-                heat_produced = int(difference > 0.1 or difference < 0) # Ensure small energy production between 15' intervals and calculation interval less than say 2' later is not counted
+                heat_produced = int(difference > 0.2 or difference < 0) # Ensure small heat production is not counted (as a result of mismatch calculation and 15' boundaries)
  #               heat_produced = int(float(total) != previous_total)
 
             consecutive = consecutive + 1 if heat_produced else 0
